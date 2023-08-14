@@ -34,19 +34,28 @@ use IEEE.NUMERIC_STD.all;
 --use UNISIM.VComponents.all;
 
 entity vga_rgb is
-    Port ( 
-        mem : in STD_LOGIC_VECTOR (15 downto 0);
+    Port (
+        clk : in STD_LOGIC;
+        
         hc : in STD_LOGIC_VECTOR (9 downto 0);
         vc : in STD_LOGIC_VECTOR (9 downto 0);
-        counter : in STD_LOGIC_VECTOR (11 downto 0);
-        input : in STD_LOGIC_VECTOR (15 downto 0); -- Previously "sw"
+        vidon : in STD_LOGIC;
+            
+        input : in STD_LOGIC_VECTOR (15 downto 0);
         color : in STD_LOGIC_VECTOR (11 downto 0);
         mode : in STD_LOGIC_VECTOR (3 downto 0);
-        vidon : in STD_LOGIC;
+            
+        rom_ena_RGB111 : out STD_LOGIC;
+        rom_addra_RGB111 : out STD_LOGIC_VECTOR (15 downto 0);
+        rom_douta_RGB111 : in STD_LOGIC_VECTOR (2 downto 0);
+            
+        rom_ena_RGB888 : out STD_LOGIC;
+        rom_addra_RGB888 : out STD_LOGIC_VECTOR (14 downto 0);
+        rom_douta_RGB888 : in STD_LOGIC_VECTOR (23 downto 0);
+            
         blue : out STD_LOGIC_VECTOR (3 downto 0);
         green : out STD_LOGIC_VECTOR (3 downto 0);
-        red : out STD_LOGIC_VECTOR (3 downto 0);
-        mem_addra : out STD_LOGIC_VECTOR (16 downto 0)
+        red : out STD_LOGIC_VECTOR (3 downto 0)
     );
 end vga_rgb;
 
@@ -56,11 +65,6 @@ architecture Behavioral of vga_rgb is
     
     constant x_max : STD_LOGIC_VECTOR (9 downto 0) := "1001111111"; -- 0 to 639
     constant y_max : STD_LOGIC_VECTOR (9 downto 0) := "0111011111"; -- 0 to 479
-    
---    constant xbp : STD_LOGIC_VECTOR (9 downto 0) := "0000110000"; -- 48
---    constant ybp : STD_LOGIC_VECTOR (9 downto 0) := "0000100001"; -- 33
---    constant xbp : STD_LOGIC_VECTOR (9 downto 0) := "0001100000"; -- 96
---    constant ybp : STD_LOGIC_VECTOR (9 downto 0) := "0000000010"; -- 2
 
     constant hbp : STD_LOGIC_VECTOR (9 downto 0) := "0010010000"; -- 96 + 48 = 144 => Back porch + Sync width
     constant vbp : STD_LOGIC_VECTOR (9 downto 0) := "0000100011"; -- 2 + 33 = 35 => Back porch + Sync width
@@ -74,129 +78,121 @@ architecture Behavioral of vga_rgb is
     signal y_enable : STD_LOGIC;
     
     signal greyscale : STD_LOGIC_VECTOR (3 downto 0); -- 4-bit counter for 16 colors per channel
-    signal palette_x_up, palette_x_down : STD_LOGIC_VECTOR (4 downto 0);
-    signal palette_y_up, palette_y_down : STD_LOGIC_VECTOR (4 downto 0);
+    signal palette_x_up, palette_x_down : STD_LOGIC_VECTOR (3 downto 0);
+    signal palette_y_up, palette_y_down : STD_LOGIC_VECTOR (3 downto 0);
     
-    signal mem_read : STD_LOGIC_VECTOR (15 downto 0);
+    -- 3x5 array to buffer 5 RGB values of 4-bits
+--    type t_rgb is array (0 to 2, 0 to 4) of STD_LOGIC_VECTOR (3 downto 0);
+--    signal r_rgb : t_rgb;
+
+    signal reg_RGB888 : STD_LOGIC_VECTOR (23 downto 0) register; -- reg
+    signal reg_RGB888x4 : STD_LOGIC_VECTOR (95 downto 0) register; -- reg
+    signal reg_addra : STD_LOGIC_VECTOR (14 downto 0);
+    signal reg_read : STD_LOGIC register := '1';
+    signal previous_x, previous_y : STD_LOGIC_VECTOR (9 downto 0) register;
     
     -- FUNCTIONS
     
-    function reverse_4bit_counter (input : in STD_LOGIC_VECTOR)
+    function reverse_4bit_counter (input : in STD_LOGIC_VECTOR (3 downto 0))
         return STD_LOGIC_VECTOR is
             variable result : STD_LOGIC_VECTOR (input'range);
         begin
-            if input = "0000" then
-                result := "1111";
-            elsif input = "0001" then
-                result := "1110";
-            elsif input = "0010" then
-                result := "1101";
-            elsif input = "0011" then
-                result := "1100";
-            elsif input = "0100" then
-                result := "1011";
-            elsif input = "0101" then
-                result := "1010";
-            elsif input = "0110" then
-                result := "1001";
-            elsif input = "0111" then
-                result := "1000";
-            elsif input = "1000" then
-                result := "0111";
-            elsif input = "1001" then
-                result := "0110";
-            elsif input = "1010" then
-                result := "0101";
-            elsif input = "1011" then
-                result := "0100";
-            elsif input = "1100" then
-                result := "0011";
-            elsif input = "1101" then
-                result := "0010";
-            elsif input = "1110" then
-                result := "0001";
-            elsif input = "1111" then
-                result := "0000";
-            end if;
+            case input is
+                when "0000" =>
+                    result := "1111";
+                when "0001" =>
+                    result := "1110";
+                when "0010" =>
+                    result := "1101";
+                when "0011" =>
+                    result := "1100";
+                when "0100" =>
+                    result := "1011";
+                when "0101" =>
+                    result := "1010";
+                when "0110" =>
+                    result := "1001";
+                when "0111" =>
+                    result := "1000";
+                when "1000" =>
+                    result := "0111";
+                when "1001" =>
+                    result := "0110";
+                when "1010" =>
+                    result := "0101";
+                when "1011" =>
+                    result := "0100";
+                when "1100" =>
+                    result := "0011";
+                when "1101" =>
+                    result := "0010";
+                when "1110" =>
+                    result := "0001";
+                when others => -- when "1111"
+                    result := "0000";
+            end case;
             return result;
         end;
         
-     function reverse_5bit_counter (input : in STD_LOGIC_VECTOR)
+        function color_8bit_to_4bit (input : in STD_LOGIC_VECTOR (7 downto 0))
         return STD_LOGIC_VECTOR is
-            variable result : STD_LOGIC_VECTOR (input'range);
+            variable result : STD_LOGIC_VECTOR (3 downto 0);
         begin
-            if input = "10000" then
-                result := "11111";
-            elsif input = "10001" then
-                result := "11110";
-            elsif input = "10010" then
-                result := "11101";
-            elsif input = "10011" then
-                result := "11100";
-            elsif input = "10100" then
-                result := "11011";
-            elsif input = "10101" then
-                result := "11010";
-            elsif input = "10110" then
-                result := "11001";
-            elsif input = "10111" then
-                result := "11000";
-            elsif input = "11000" then
-                result := "10111";
-            elsif input = "11001" then
-                result := "10110";
-            elsif input = "11010" then
-                result := "10101";
-            elsif input = "11011" then
-                result := "10100";
-            elsif input = "11100" then
-                result := "10011";
-            elsif input = "11101" then
-                result := "10010";
-            elsif input = "11110" then
-                result := "10001";
-            elsif input = "11111" then
-                result := "10000";
+--            if input(7) = '1' or input(6) = '1' then
+--                result(3) := '1';
+--            else
+--                result(3) := '0';
+--            end if;
+            
+--            if input(5) = '1' or input(4) = '1' then
+--                result(2) := '1';
+--            else
+--                result(2) := '0';
+--            end if;
+            
+--            if input(3) = '1' or input(2) = '1' then
+--                result(1) := '1';
+--            else
+--                result(1) := '0';
+--            end if;
+            
+--            if input(1) = '1' or input(0) = '1' then
+--                result(0) := '1';
+--            else
+--                result(0) := '0';
+--            end if;
+
+            if input(7) = '1' and input(6) = '1' then
+                result(3) := '1';
+            else
+                result(3) := '0';
             end if;
+            
+            if input(5) = '1' and input(4) = '1' then
+                result(2) := '1';
+            else
+                result(2) := '0';
+            end if;
+            
+            if input(3) = '1' and input(2) = '1' then
+                result(1) := '1';
+            else
+                result(1) := '0';
+            end if;
+            
+            if input(1) = '1' and input(0) = '1' then
+                result(0) := '1';
+            else
+                result(0) := '0';
+            end if;
+            
             return result;
         end;
-    
 begin
 
     -- PROCESSES --
     
-    -- Counters
-    -- X position
---    process(clk, reset, hc) 
---    begin 
---        if reset = '1' then 
---            x <= "0000000000";
---        elsif(rising_edge(clk) and hc > xbp) then 
---            if x = x_max then 
---                x <= "0000000000";
---                y_enable <= '1'; 
---            else 
---                x <= x + 1; 
---                y_enable <= '0';  
---            end if; 
---       end if; 
---    end process; 
- 
---    -- Y position
---    process(clk, reset, vc, y_enable) 
---    begin 
---        if reset = '1' then 
---            y <= "0000000000"; 
---        elsif(rising_edge(clk) and vc > ybp and y_enable = '1') then
---            if y = y_max then
---                y <= "0000000000"; 
---            else  
---                y <= y + 1;
---            end if; 
---        end if; 
---    end process; 
-    
-    -- Color counters
+    -- Determine actual pixel positions on screen considering back porch and sync width
     process(hc, vc)
     begin
         if hc < hbp then
@@ -213,81 +209,26 @@ begin
     end process;
 
     -- Screen draws
-    process(vidon, vc, hc, color, mode)
+    process(clk, vidon, vc, hc, color, mode)
         variable i: integer;
+        variable j: integer;
     begin
         -- Default "0000 0000 0000" = black screen, "1111 1111 1111" = screen
         red <= "0000";
         green <= "0000";
         blue <= "0000";
         
-        -- Grid
+        -- Color Grid
         if mode = "0001" and vidon = '1' then
-            if hc(1) = '1' or vc(2) = '1' then
+            if hc(1) = '1' or vc(1) = '1' then
                 red <= color (3 downto 0);
                 green <= color (7 downto 4);
                 blue <= color (11 downto 8);
-            end if;
-
-        -- Square
-        elsif mode = "0011" and vidon = '1' then
-            if (hc > 220 and hc < 420) and (vc > 140 and vc < 340) then
-                red <= color (3 downto 0);
-                green <= color (7 downto 4);
-                blue <= color (11 downto 8);
-            else
-                red <= "1111";
-                green <= "1111";
-                blue <= "1111";
             end if;
         
+        
 --        -- Color Palette
---        if mode = "0111" and vidon = '1' then
---            -- hc creates vertical lines, vc creates horizontal lines
---            if hc > hbp and vc > vbp then -- Draw outside the Back Porch area
---                if vc <= (127 + vbp) then -- Grayscale
---                    red <= hc (7 downto 4);
---                    green <= hc (7 downto 4);
---                    blue <= hc (7 downto 4);
---                elsif vc > (128 + vbp) and vc <= (255 + vbp) then
---                    red <= hc (7 downto 4);
---                    green <= "0000";
---                    blue <= "0000";
---                elsif vc > (256 + vbp) and vc <= (383 + vbp) then
---                    red <= "0000";
---                    green <= hc (7 downto 4);
---                    blue <= "0000";
---                elsif vc > (384 + vbp) and vc <= (511 + vbp) then
---                    red <= "0000";
---                    green <= "0000";
---                    blue <= hc (7 downto 4);
---                end if;
---            end if;
---        end if;
-
-
-        elsif mode = "0111" and vidon = '1' then
-            -- Greyscale and single channel colors. 8 pixels per color
-            
---            if x < 128 then -- Top to bottom of the screen
---                if y < 120 then
---                    red <= greyscale;
---                    green <= greyscale;
---                    blue <= greyscale;
---                elsif y >= 120 and y < 240 then
---                    red <= greyscale;
---                    green <= "0000";
---                    blue <= "0000";
---                elsif y >= 240 and y < 360 then
---                    red <= "0000";
---                    green <= greyscale;
---                    blue <= "0000";
---                elsif y >= 360 then
---                    red <= "0000";
---                    green <= "0000";
---                    blue <= greyscale;
---                end if; 
---            end if;
+        elsif mode = "0011" and vidon = '1' then
 
             greyscale <= x (6 downto 3);
             
@@ -329,81 +270,39 @@ begin
                 end if; 
             end if;
             
+            
             -- Full 12-bit color palette of 4096 colors
-
---            if x >= 136 and x < 631  and y >= 8 and y < 471 then
---                red <= palette (3 downto 0);
---                green <= palette (7 downto 4);
---                blue <= palette (11 downto 8);
---            end if;
-            
             -- palette_x_up <= x (5 downto 2) - 2; -- Doing -2 is actually -8 pixels bc of the (5 downto 2)
-            palette_x_up <= '1' & x (5 downto 2);
-            palette_x_down <= reverse_5bit_counter(palette_x_up); -- Reverse counting from 0 -> 15 to 15 -> 0
+            palette_x_up <= x (5 downto 2);
+            palette_x_down <= reverse_4bit_counter(palette_x_up); -- Reverse counting from 0 -> 15 to 15 -> 0
             
-            palette_y_up <= '1' & y (5 downto 2) + 2;
-            palette_y_down <= reverse_5bit_counter(palette_y_up); -- Reverse counting from 0 -> 15 to 15 -> 0
-            
-            
---            if palette_x_up = "0000" then
---                palette_x_down <= "1111";
---            elsif palette_x_up = "0001" then
---                palette_x_down <= "1110";
---            elsif palette_x_up = "0010" then
---                palette_x_down <= "1101";
---            elsif palette_x_up = "0011" then
---                palette_x_down <= "1100";
---            elsif palette_x_up = "0100" then
---                palette_x_down <= "1011";
---            elsif palette_x_up = "0101" then
---                palette_x_down <= "1010";
---            elsif palette_x_up = "0110" then
---                palette_x_down <= "1001";
---            elsif palette_x_up = "0111" then
---                palette_x_down <= "1000";
---            elsif palette_x_up = "1000" then
---                palette_x_down <= "0111";
---            elsif palette_x_up = "1001" then
---                palette_x_down <= "0110";
---            elsif palette_x_up = "1010" then
---                palette_x_down <= "0101";
---            elsif palette_x_up = "1011" then
---                palette_x_down <= "0100";
---            elsif palette_x_up = "1100" then
---                palette_x_down <= "0011";
---            elsif palette_x_up = "1101" then
---                palette_x_down <= "0010";
---            elsif palette_x_up = "1110" then
---                palette_x_down <= "0001";
---            elsif palette_x_up = "1111" then
---                palette_x_down <= "0000";
---            end if;
-            
+            palette_y_up <= y (5 downto 2) + 2; -- +8 pixels
+            palette_y_down <= reverse_4bit_counter(palette_y_up); -- Reverse counting from 0 -> 15 to 15 -> 0
             
             if x >= 256 and x < 640 then
                 if x >= 576 then
                     red <= "1111";
                     green <= "0000";
-                    blue <= palette_x_down (3 downto 0);
+                    blue <= palette_x_down;
                 elsif x >= 512 then
-                    red <= palette_x_up (3 downto 0);
+                    red <= palette_x_up;
                     green <= "0000";
                     blue <= "1111";
                 elsif x >= 448 then
                     red <= "0000";
-                    green <= palette_x_down (3 downto 0);
+                    green <= palette_x_down;
                     blue <= "1111";
                 elsif x >= 384 then
                     red <= "0000";
                     green <= "1111";
-                    blue <= palette_x_up (3 downto 0);
+                    blue <= palette_x_up;
                 elsif x >= 320 then
-                    red <= palette_x_down (3 downto 0);
+                    red <= palette_x_down;
                     green <= "1111";
                     blue <= "0000";
                 else
                     red <= "1111";
-                    green <= palette_x_up (3 downto 0);
+                    green <= palette_x_up;
                     blue <= "0000";
                 end if;
             end if;
@@ -412,57 +311,57 @@ begin
                 if x >= 256 and x < 640 then -- With gradient variations
                     if x >= 576 then
                         red <= "1111";
-                        green <= palette_y_up (3 downto 0) + 6;
-                        blue <= palette_x_down (3 downto 0);
+                        green <= palette_y_up + 6;
+                        blue <= palette_x_down;
                     elsif x >= 512 then
-                        red <= palette_x_up (3 downto 0);
-                        green <= palette_y_up (3 downto 0) + 6;
+                        red <= palette_x_up;
+                        green <= palette_y_up + 6;
                         blue <= "1111";
                     elsif x >= 448 then
-                        red <= palette_y_up (3 downto 0) + 6;
-                        green <= palette_x_down (3 downto 0);
+                        red <= palette_y_up + 6;
+                        green <= palette_x_down;
                         blue <= "1111";
                     elsif x >= 384 then
-                        red <= palette_y_up (3 downto 0) + 6;
+                        red <= palette_y_up + 6;
                         green <= "1111";
-                        blue <= palette_x_up (3 downto 0);
+                        blue <= palette_x_up;
                     elsif x >= 320 then
-                        red <= palette_x_down (3 downto 0);
+                        red <= palette_x_down;
                         green <= "1111";
-                        blue <= palette_y_up (3 downto 0) + 6;
+                        blue <= palette_y_up + 6;
                     else
                         red <= "1111";
-                        green <= palette_x_up (3 downto 0);
-                        blue <= palette_y_up (3 downto 0) + 6;
+                        green <= palette_x_up;
+                        blue <= palette_y_up + 6;
                     end if;
                 end if;
             elsif y >= 120 and y < 184 then -- Black = less colors
                 if x >= 256 and x < 640 then -- With gradient variations
                     if x >= 576 then
-                        red <= palette_y_up (3 downto 0);
+                        red <= palette_y_up;
                         green <= "0000";
-                        blue <= palette_x_down (3 downto 0);
+                        blue <= palette_x_down;
                         --blue <= STD_LOGIC_VECTOR(resize(unsigned(palette_x_down - palette_y_down), 4)); -- palette_x_down
                     elsif x >= 512 then
                         --red <= STD_LOGIC_VECTOR(resize(unsigned(palette_x_up - palette_y_down), 4)); -- palette_x_up
-                        red <= palette_x_up (3 downto 0);
+                        red <= palette_x_up;
                         green <= "0000";
-                        blue <= palette_y_up (3 downto 0);
+                        blue <= palette_y_up;
                     elsif x >= 448 then
                         red <= "0000";
-                        green <= palette_x_down (3 downto 0); -- palette_x_down
-                        blue <= palette_y_up (3 downto 0);
+                        green <= palette_x_down; -- palette_x_down
+                        blue <= palette_y_up;
                     elsif x >= 384 then
                         red <= "0000";
-                        green <= palette_y_up (3 downto 0);
-                        blue <= palette_x_up (3 downto 0); -- palette_x_up
+                        green <= palette_y_up;
+                        blue <= palette_x_up; -- palette_x_up
                     elsif x >= 320 then
-                        red <= palette_x_down (3 downto 0);
-                        green <= palette_y_up (3 downto 0);
+                        red <= palette_x_down;
+                        green <= palette_y_up;
                         blue <= "0000";
                     else
-                        red <= palette_y_up (3 downto 0);
-                        green <= palette_x_up (3 downto 0); -- palette_x_up
+                        red <= palette_y_up;
+                        green <= palette_x_up; -- palette_x_up
                         blue <= "0000";
                     end if;
                 end if;
@@ -475,15 +374,109 @@ begin
                 blue <= color (11 downto 8);
             end if;
         
-        -- Audio visualizer
-        elsif mode = "1111" and vidon = '1' then
-            -- mem_addra <= '0' & y (9 downto 2) & x (9 downto 2);
-            -- mem_addra <= x (9 downto 2) & y (9 downto 2) & '0';
-            mem_addra <= '0' & x (8 downto 1) & y (8 downto 1);
-
-            red <= mem (2 downto 0) & '1';
-            green <= mem (5 downto 3) & '1';
-            blue <= mem (7 downto 6) & "11";
+        -- .COE Image from ROM
+        elsif mode = "0111" and vidon = '1' then
+            -- RGB332
+--            if x < 320 and y < 240 then
+--                rom_ena_test <= '1';
+--                rom_addra <= y (7 downto 0) & x (8 downto 0); -- x = 320 -> 9-bit, y = 240 -> 8-bit
+    
+--                red <= rom_douta (2 downto 0) & '0';
+--                green <= rom_douta (5 downto 3) & '0';
+--                blue <= rom_douta (7 downto 6) & "00";
+--            end if;
+            
+            -- RGB444
+--            if x < 320 and y < 240 then
+--                rom_addra <= y (7 downto 0) & x (8 downto 0); -- x = 320 -> 9-bit, y = 240 -> 8-bit
+    
+--                red <= rom_douta (3 downto 0);
+--                green <= rom_douta (7 downto 4);
+--                blue <= rom_douta (11 downto 8);
+--            end if;
+            
+            if color = "000000000001" then -- RGB111 -- Can be displayed without timing issues.
+                if x < 240 and y < 240 then
+                    rom_ena_RGB111 <= '1';
+                    rom_addra_RGB111 <= y (7 downto 0) & x (7 downto 0);
+        
+                    red <= rom_douta_RGB111 (2 downto 0) & '0';
+                    green <= rom_douta_RGB111 (2 downto 0) & '0';
+                    blue <= rom_douta_RGB111 (2 downto 0) & '0';
+                end if;
+            
+            
+            elsif color = "000000000011" then -- RGB888 - Needs 5x buffer because of timing issues.
+                -- 160 x 115 image -> x3 = 480 x 345
+    --            if x < 480 - 6 and y < 345 - 6 then
+    --                rom_ena_RGB888 <= '1';
+    --                rom_addra_RGB888 <= y (8 downto 2) - 6 & x (9 downto 2) - 6;
+                    
+    --                r_rgb(0, i) <= color_8bit_to_4bit(rom_douta_RGB888 (7 downto 0));
+    --                r_rgb(1, i) <= color_8bit_to_4bit(rom_douta_RGB888 (15 downto 8));
+    --                r_rgb(2, i) <= color_8bit_to_4bit(rom_douta_RGB888 (23 downto 16));
+                    
+    --                if i = 4 then
+    --                    i := 0;
+    --                else
+    --                    i := i + 1;
+    --                end if;
+    --            end if;
+--                if reg_read = '1' then
+--                    rom_ena_RGB888 <= '1';
+--                    rom_addra_RGB888 <= reg_addra;
+--                    reg_RGB888x4(95 downto 72) <= rom_douta_RGB888;
+                    
+--                    rom_addra_RGB888 <= reg_addra + 1;
+--                    reg_RGB888x4(47 downto 24) <= rom_douta_RGB888;
+                    
+--                    rom_addra_RGB888 <= reg_addra + 2;
+--                    reg_RGB888x4(71 downto 48) <= rom_douta_RGB888;
+                    
+--                    rom_addra_RGB888 <= reg_addra + 3;
+--                    reg_RGB888x4(95 downto 72) <= rom_douta_RGB888;
+                    
+--                    reg_read <= '0';
+--                end if;
+                
+                if rising_edge(clk) then 
+                    rom_ena_RGB888 <= '1';
+                    rom_addra_RGB888 <= y (8 downto 2) & x (9 downto 2) - 1;
+                    reg_RGB888 <= rom_douta_RGB888;
+                end if;
+                
+                if x < 480 and y < 345 then
+--                    rom_ena_RGB888 <= '1';
+--                    rom_addra_RGB888 <= y (7 downto 0) & x (7 downto 0);
+                    
+    --                red <= color_8bit_to_4bit(rom_douta_RGB888 (7 downto 0));
+    --                green <= color_8bit_to_4bit(rom_douta_RGB888 (15 downto 8));
+    --                blue <= color_8bit_to_4bit(rom_douta_RGB888 (23 downto 16));
+                    
+--                    red <= (rom_douta_RGB888 (7 downto 4));
+--                    green <= (rom_douta_RGB888 (15 downto 12));
+--                    blue <= (rom_douta_RGB888 (23 downto 20));
+                    
+                    red <= (reg_RGB888 (7 downto 4));
+                    green <= (reg_RGB888 (15 downto 12));
+                    blue <= (reg_RGB888 (23 downto 20));
+                    
+    --                red <= r_rgb(0, j);
+    --                green <= r_rgb(1, j);
+    --                blue <= r_rgb(2, j);
+                    
+    --                if j = 4 then
+    --                    j := 0;
+    --                else
+    --                    j := j + 1;
+    --                end if;
+                end if;
+            end if;
+            
+            -- Audio Visualizer
+--            elsif mode = "1111" and vidon = '1' then
+            
+--            end if;
         end if;
         
     end process;

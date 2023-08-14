@@ -37,7 +37,7 @@ entity top is
   Port ( 
     clk_100 : in STD_LOGIC;
     reset : in STD_LOGIC; -- Button U18
-    sw : in STD_LOGIC_VECTOR (15 downto 0); -- Switches V17 to R3
+    sw : in STD_LOGIC_VECTOR (15 downto 0);
     led : out STD_LOGIC_VECTOR (15 downto 0);
     hsync : out STD_LOGIC;
     vsync : out STD_LOGIC;
@@ -68,35 +68,53 @@ architecture Behavioral of top is
             vsync : out STD_LOGIC;
             hc : out STD_LOGIC_VECTOR (9 downto 0);
             vc : out STD_LOGIC_VECTOR (9 downto 0);
-            counter : out STD_LOGIC_VECTOR (11 downto 0);
             vidon : out STD_LOGIC
         );
     end component vga_sync;
     
     component vga_rgb is
         Port (
-            mem : in STD_LOGIC_VECTOR (15 downto 0);
+            clk : in STD_LOGIC;
+            
             hc : in STD_LOGIC_VECTOR (9 downto 0);
             vc : in STD_LOGIC_VECTOR (9 downto 0);
-            counter : in STD_LOGIC_VECTOR (11 downto 0);
+            vidon : in STD_LOGIC;
+            
             input : in STD_LOGIC_VECTOR (15 downto 0);
             color : in STD_LOGIC_VECTOR (11 downto 0);
             mode : in STD_LOGIC_VECTOR (3 downto 0);
-            vidon : in STD_LOGIC;
+            
+            rom_ena_RGB111 : out STD_LOGIC;
+            rom_addra_RGB111 : out STD_LOGIC_VECTOR (15 downto 0);
+            rom_douta_RGB111 : in STD_LOGIC_VECTOR (2 downto 0);
+            
+            rom_ena_RGB888 : out STD_LOGIC;
+            rom_addra_RGB888 : out STD_LOGIC_VECTOR (14 downto 0);
+            rom_douta_RGB888 : in STD_LOGIC_VECTOR (23 downto 0);
+            
             blue : out STD_LOGIC_VECTOR (3 downto 0);
             green : out STD_LOGIC_VECTOR (3 downto 0);
-            red : out STD_LOGIC_VECTOR (3 downto 0);
-            mem_addra : out STD_LOGIC_VECTOR (16 downto 0)
+            red : out STD_LOGIC_VECTOR (3 downto 0)
         );
     end component vga_rgb;
     
-    component blk_mem_photo1_320x240 IS
-      Port (
-        clka : IN STD_LOGIC;
-        addra : IN STD_LOGIC_VECTOR(16 DOWNTO 0);
-        douta : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
-      );
-    end component blk_mem_photo1_320x240;
+    component rom_test_RGB111 is
+        Port (
+            clka : in STD_LOGIC;
+            ena : in STD_LOGIC;
+            addra : in STD_LOGIC_VECTOR(15 DOWNTO 0);
+            douta : out STD_LOGIC_VECTOR(2 DOWNTO 0)
+        );
+    end component rom_test_RGB111;
+    
+    component rom_test_RGB888 is
+        Port (
+            clka : in STD_LOGIC;
+            ena : in STD_LOGIC;
+            addra : in STD_LOGIC_VECTOR(14 DOWNTO 0);
+            douta : out STD_LOGIC_VECTOR(23 DOWNTO 0)
+        );
+    end component rom_test_RGB888;
     
     -- SINGALS
     
@@ -104,11 +122,16 @@ architecture Behavioral of top is
     
     signal hc :  STD_LOGIC_VECTOR(9 downto 0);
     signal vc :  STD_LOGIC_VECTOR(9 downto 0);
-    signal counter12bit : STD_LOGIC_VECTOR (11 downto 0);
     signal vidon : STD_LOGIC;
     
-    signal addra : STD_LOGIC_VECTOR (16 downto 0);
-    signal douta : STD_LOGIC_VECTOR (15 downto 0);
+    signal rom_ena_RGB111 : STD_LOGIC;
+    signal rom_addra_RGB111 : STD_LOGIC_VECTOR (15 downto 0);
+    signal rom_douta_RGB111 : STD_LOGIC_VECTOR (2 downto 0);
+    
+    signal rom_ena_RGB888 : STD_LOGIC;
+    signal rom_addra_RGB888 : STD_LOGIC_VECTOR (14 downto 0);
+    signal rom_douta_RGB888 : STD_LOGIC_VECTOR (23 downto 0);
+    
     signal input :  STD_LOGIC_VECTOR (15 downto 0);
 
 begin
@@ -124,39 +147,51 @@ begin
         );
         
     vga_part_sync : vga_sync 
-        Port map(
+        Port map (
             clk => clk_25,
             reset => reset,
             hsync => hsync, 
             vsync => vsync, 
             hc => hc, 
             vc => vc,
-            counter => counter12bit,
             vidon => vidon
         );
         
      vga_part_rgb : vga_rgb 
         Port map (
-            mem => douta,
+            clk => clk_100,
             hc => hc,
             vc => vc,
-            counter => counter12bit,
             input => input,
             color => sw (11 downto 0),
             mode => sw (15 downto 12),
             vidon => vidon,
+            rom_ena_RGB111 => rom_ena_RGB111,
+            rom_addra_RGB111 => rom_addra_RGB111,
+            rom_douta_RGB111 => rom_douta_RGB111,
+            rom_ena_RGB888 => rom_ena_RGB888,
+            rom_addra_RGB888 => rom_addra_RGB888,
+            rom_douta_RGB888 => rom_douta_RGB888,
             blue => vgaBlue,
             green => vgaGreen,
-            red => vgaRed,
-            mem_addra => addra
+            red => vgaRed
         );
         
-     ROM1 : blk_mem_photo1_320x240
-      Port map (
-        clka => clk_25,
-        addra => addra, -- Input memory address you want to read
-        douta => douta -- On rising clock edge the memory on the given address can be read here.
-      );
+    rom_test_3bit : rom_test_RGB111
+        Port map (
+            clka => clk_25,
+            ena => rom_ena_RGB111,
+            addra => rom_addra_RGB111,
+            douta => rom_douta_RGB111
+        );
+        
+     rom_test_24bit : rom_test_RGB888
+        Port map (
+            clka => clk_25,
+            ena => rom_ena_RGB888,
+            addra => rom_addra_RGB888,
+            douta => rom_douta_RGB888
+        );
         
      led <= sw; -- Visual feedback for switches
 

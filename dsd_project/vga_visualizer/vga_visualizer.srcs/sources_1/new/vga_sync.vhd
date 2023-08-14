@@ -41,7 +41,6 @@ entity vga_sync is
         vsync : out STD_LOGIC;
         hc : out STD_LOGIC_VECTOR (9 downto 0);
         vc : out STD_LOGIC_VECTOR (9 downto 0);
-        counter : out STD_LOGIC_VECTOR (11 downto 0); -- 0000 -> 1001 (0 -> 9)
         vidon : out STD_LOGIC);
 end vga_sync;
 
@@ -92,7 +91,6 @@ architecture Behavioral of vga_sync is
     -- SIGNALS --
     
     signal hcs, vcs : STD_LOGIC_VECTOR(9 downto 0); -- These are the Horizontal and Vertical counters
-    signal counter12bit : STD_LOGIC_VECTOR (11 downto 0);
     signal vsenable : STD_LOGIC; -- Enable for the Vertical counter
 
 begin
@@ -128,19 +126,6 @@ begin
             end if; 
         end if; 
     end process;
-    
-    process(clk, reset) 
-    begin 
-        if reset = '1' then 
-            counter12bit <= "000000000000";
-        elsif rising_edge(clk) and hcs > hbp then 
-            if counter12bit >= "111111111111" then
-                counter12bit <= "000000000000"; --reset the counter 
-            else 
-                counter12bit <= counter12bit + 1; 
-            end if; 
-       end if; 
-    end process; 
      
     vsync <= '0' when vcs < vsw else '1';  --Vertical Sync Pulse is low when vc is 0 or 1  (Vertical Sync width = 2)
        
@@ -151,8 +136,5 @@ begin
     -- Output horizontal and vertical counters 
     hc <= hcs; 
     vc <= vcs;
-    
-    -- Extra counters
-    counter <= counter12bit;
 
 end Behavioral;
