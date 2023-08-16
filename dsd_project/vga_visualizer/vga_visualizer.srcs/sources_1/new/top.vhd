@@ -81,40 +81,208 @@ architecture Behavioral of top is
             vidon : in STD_LOGIC;
             
             input : in STD_LOGIC_VECTOR (15 downto 0);
-            color : in STD_LOGIC_VECTOR (11 downto 0);
-            mode : in STD_LOGIC_VECTOR (3 downto 0);
+            sw : in STD_LOGIC_VECTOR (15 downto 0);
             
-            rom_ena_RGB111 : out STD_LOGIC;
-            rom_addra_RGB111 : out STD_LOGIC_VECTOR (15 downto 0);
-            rom_douta_RGB111 : in STD_LOGIC_VECTOR (2 downto 0);
+            volume: in STD_LOGIC_VECTOR (8 downto 0);
             
-            rom_ena_RGB888 : out STD_LOGIC;
-            rom_addra_RGB888 : out STD_LOGIC_VECTOR (14 downto 0);
-            rom_douta_RGB888 : in STD_LOGIC_VECTOR (23 downto 0);
+--            rom_ena_RGB111 : out STD_LOGIC;
+--            rom_addra_RGB111 : out STD_LOGIC_VECTOR (15 downto 0);
+--            rom_douta_RGB111 : in STD_LOGIC_VECTOR (2 downto 0);
             
+--            rom_ena_RGB888 : out STD_LOGIC;
+--            rom_addra_RGB888 : out STD_LOGIC_VECTOR (14 downto 0);
+--            rom_douta_RGB888 : in STD_LOGIC_VECTOR (23 downto 0);
+            
+--            rom_ena_mydogs_greyscale : out STD_LOGIC;
+--            rom_addra_mydogs_greyscale : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_greyscale : in STD_LOGIC_VECTOR(2 downto 0);
+            
+--            rom_ena_mydogs_color : out STD_LOGIC;
+--            rom_addra_mydogs_color : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_color : in STD_LOGIC_VECTOR(15 downto 0);
+
+            rom_ena_mydogs_color_1of2 : out STD_LOGIC;
+            rom_addra_mydogs_color_1of2 : out STD_LOGIC_VECTOR(15 downto 0);
+            rom_douta_mydogs_color_1of2 : in STD_LOGIC_VECTOR(15 downto 0);
+            
+            rom_ena_mydogs_color_2of2 : out STD_LOGIC;
+            rom_addra_mydogs_color_2of2 : out STD_LOGIC_VECTOR(15 downto 0);
+            rom_douta_mydogs_color_2of2 : in STD_LOGIC_VECTOR(15 downto 0);
+                
+--            rom_ena_mydogs_greyscale_1of4 : out STD_LOGIC;
+--            rom_addra_mydogs_greyscale_1of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_greyscale_1of4 : in STD_LOGIC_VECTOR(2 downto 0);
+--            rom_ena_mydogs_greyscale_2of4 : out STD_LOGIC;
+--            rom_addra_mydogs_greyscale_2of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_greyscale_2of4 : in STD_LOGIC_VECTOR(2 downto 0);
+--            rom_ena_mydogs_greyscale_3of4 : out STD_LOGIC;
+--            rom_addra_mydogs_greyscale_3of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_greyscale_3of4 : in STD_LOGIC_VECTOR(2 downto 0);
+--            rom_ena_mydogs_greyscale_4of4 : out STD_LOGIC;
+--            rom_addra_mydogs_greyscale_4of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_greyscale_4of4 : in STD_LOGIC_VECTOR(2 downto 0);
+            
+--            rom_ena_mydogs_color_1of4 : out STD_LOGIC;
+--            rom_addra_mydogs_color_1of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_color_1of4 : in STD_LOGIC_VECTOR(15 downto 0);
+--            rom_ena_mydogs_color_2of4 : out STD_LOGIC;
+--            rom_addra_mydogs_color_2of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_color_2of4 : in STD_LOGIC_VECTOR(15 downto 0);
+--            rom_ena_mydogs_color_3of4 : out STD_LOGIC;
+--            rom_addra_mydogs_color_3of4 : out STD_LOGIC_VECTOR(15 downto 0);
+--            rom_douta_mydogs_color_3of4 : in STD_LOGIC_VECTOR(15 downto 0);
+--            rom_ena_mydogs_color_4of4 : out STD_LOGIC;
+--            rom_addra_mydogs_color_4of4 : out STD_LOGIC_VECTOR(14 downto 0);
+--            rom_douta_mydogs_color_4of4 : in STD_LOGIC_VECTOR(15 downto 0);
+                        
             blue : out STD_LOGIC_VECTOR (3 downto 0);
             green : out STD_LOGIC_VECTOR (3 downto 0);
             red : out STD_LOGIC_VECTOR (3 downto 0)
         );
     end component vga_rgb;
     
-    component rom_test_RGB111 is
-        Port (
-            clka : in STD_LOGIC;
-            ena : in STD_LOGIC;
-            addra : in STD_LOGIC_VECTOR(15 DOWNTO 0);
-            douta : out STD_LOGIC_VECTOR(2 DOWNTO 0)
-        );
-    end component rom_test_RGB111;
+    -- ROM's ------------------------------------------------------------------------------------------------------
     
-    component rom_test_RGB888 is
-        Port (
-            clka : in STD_LOGIC;
-            ena : in STD_LOGIC;
-            addra : in STD_LOGIC_VECTOR(14 DOWNTO 0);
-            douta : out STD_LOGIC_VECTOR(23 DOWNTO 0)
-        );
-    end component rom_test_RGB888;
+--    -- Test ROM's ----------------------------------------------------------
+--    component rom_test_RGB111 is
+--        Port (
+--            clka : in STD_LOGIC;
+--            ena : in STD_LOGIC;
+--            addra : in STD_LOGIC_VECTOR(15 downto 0);
+--            douta : out STD_LOGIC_VECTOR(2 downto 0)
+--        );
+--    end component rom_test_RGB111;
+    
+--    component rom_test_RGB888 is
+--        Port (
+--            clka : in STD_LOGIC;
+--            ena : in STD_LOGIC;
+--            addra : in STD_LOGIC_VECTOR(14 downto 0);
+--            douta : out STD_LOGIC_VECTOR(23 downto 0)
+--        );
+--    end component rom_test_RGB888;
+    
+--    -- MyDogs full images 256x256 ------------------------------------------
+--    component rom_mydogs_greyscale is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(2 downto 0)
+--      );
+--    end component rom_mydogs_greyscale;
+    
+--    component rom_mydogs_color is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(15 downto 0)
+--      );
+--    end component rom_mydogs_color;
+    
+    -- MyDogs partial images 2x2 256x256 -------------------------------------
+    
+    component rom_mydogs_color_1of2 is
+      Port (
+        clka : in STD_LOGIC;
+        ena : in STD_LOGIC;
+        addra : in STD_LOGIC_VECTOR(15 downto 0);
+        douta : out STD_LOGIC_VECTOR(15 downto 0)
+      );
+    end component rom_mydogs_color_1of2;
+    
+    component rom_mydogs_color_2of2 is
+      Port (
+        clka : in STD_LOGIC;
+        ena : in STD_LOGIC;
+        addra : in STD_LOGIC_VECTOR(15 downto 0);
+        douta : out STD_LOGIC_VECTOR(15 downto 0)
+      );
+    end component rom_mydogs_color_2of2;
+    
+    -- MyDogs partial images 4x4 160x240 -------------------------------------
+    
+    -- Too much memory use for both greyscale and color
+        -- Implementation Error
+        -- [DRC UTLZ-1] Resource utilization: RAMB18 and RAMB36/FIFO over-utilized in Top Level Design 
+        -- (This design requires more RAMB18 and RAMB36/FIFO cells than are available in the target device. 
+        -- This design requires 108 of such cell types but only 100 compatible sites are available in the target device. 
+        -- Please analyze your synthesis results and constraints to ensure the design is mapped to Xilinx primitives as expected. If so, please consider targeting a larger device.)
+
+--    -- Greyscale---------------------------------
+--    component rom_mydogs_greyscale_1of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(2 downto 0)
+--      );
+--    end component rom_mydogs_greyscale_1of4;
+    
+--    component rom_mydogs_greyscale_2of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(2 downto 0)
+--      );
+--    end component rom_mydogs_greyscale_2of4;
+    
+--    component rom_mydogs_greyscale_3of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(2 downto 0)
+--      );
+--    end component rom_mydogs_greyscale_3of4;
+    
+--    component rom_mydogs_greyscale_4of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(2 downto 0)
+--      );
+--    end component rom_mydogs_greyscale_4of4;
+    
+--    -- Color ---------------------------------------
+--    component rom_mydogs_color_1of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(15 downto 0)
+--      );
+--    end component rom_mydogs_color_1of4;
+    
+--    component rom_mydogs_color_2of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(15 downto 0)
+--      );
+--    end component rom_mydogs_color_2of4;
+    
+--    component rom_mydogs_color_3of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(15 downto 0);
+--        douta : out STD_LOGIC_VECTOR(15 downto 0)
+--      );
+--    end component rom_mydogs_color_3of4;
+    
+--    component rom_mydogs_color_4of4 is
+--      Port (
+--        clka : in STD_LOGIC;
+--        ena : in STD_LOGIC;
+--        addra : in STD_LOGIC_VECTOR(14 downto 0);
+--        douta : out STD_LOGIC_VECTOR(15 downto 0)
+--      );
+--    end component rom_mydogs_color_4of4;
     
     -- SINGALS
     
@@ -124,15 +292,62 @@ architecture Behavioral of top is
     signal vc :  STD_LOGIC_VECTOR(9 downto 0);
     signal vidon : STD_LOGIC;
     
-    signal rom_ena_RGB111 : STD_LOGIC;
-    signal rom_addra_RGB111 : STD_LOGIC_VECTOR (15 downto 0);
-    signal rom_douta_RGB111 : STD_LOGIC_VECTOR (2 downto 0);
+    -- ROM's
+--    -- Test ROM's
+--    signal rom_ena_RGB111 : STD_LOGIC;
+--    signal rom_addra_RGB111 : STD_LOGIC_VECTOR (15 downto 0);
+--    signal rom_douta_RGB111 : STD_LOGIC_VECTOR (2 downto 0);
     
-    signal rom_ena_RGB888 : STD_LOGIC;
-    signal rom_addra_RGB888 : STD_LOGIC_VECTOR (14 downto 0);
-    signal rom_douta_RGB888 : STD_LOGIC_VECTOR (23 downto 0);
+--    signal rom_ena_RGB888 : STD_LOGIC;
+--    signal rom_addra_RGB888 : STD_LOGIC_VECTOR (14 downto 0);
+--    signal rom_douta_RGB888 : STD_LOGIC_VECTOR (23 downto 0);
     
-    signal input :  STD_LOGIC_VECTOR (15 downto 0);
+--    -- MyDogs full images 256x256
+--    signal rom_ena_mydogs_greyscale : STD_LOGIC;
+--    signal rom_addra_mydogs_greyscale : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_greyscale : STD_LOGIC_VECTOR(2 downto 0);
+    
+--    signal rom_ena_mydogs_color : STD_LOGIC;
+--    signal rom_addra_mydogs_color : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_color : STD_LOGIC_VECTOR(15 downto 0);
+    
+    signal rom_ena_mydogs_color_1of2 : STD_LOGIC;
+    signal rom_addra_mydogs_color_1of2 : STD_LOGIC_VECTOR(15 downto 0);
+    signal rom_douta_mydogs_color_1of2 : STD_LOGIC_VECTOR(15 downto 0);
+    
+    signal rom_ena_mydogs_color_2of2 : STD_LOGIC;
+    signal rom_addra_mydogs_color_2of2 : STD_LOGIC_VECTOR(15 downto 0);
+    signal rom_douta_mydogs_color_2of2 : STD_LOGIC_VECTOR(15 downto 0);
+    
+--    -- MyDogs partial images 4x4 160x240
+--    signal rom_ena_mydogs_greyscale_1of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_greyscale_1of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_greyscale_1of4 : STD_LOGIC_VECTOR(2 downto 0);
+--    signal rom_ena_mydogs_greyscale_2of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_greyscale_2of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_greyscale_2of4 : STD_LOGIC_VECTOR(2 downto 0);
+--    signal rom_ena_mydogs_greyscale_3of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_greyscale_3of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_greyscale_3of4 : STD_LOGIC_VECTOR(2 downto 0);
+--    signal rom_ena_mydogs_greyscale_4of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_greyscale_4of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_greyscale_4of4 : STD_LOGIC_VECTOR(2 downto 0);
+    
+--    signal rom_ena_mydogs_color_1of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_color_1of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_color_1of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_ena_mydogs_color_2of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_color_2of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_color_2of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_ena_mydogs_color_3of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_color_3of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_douta_mydogs_color_3of4 : STD_LOGIC_VECTOR(15 downto 0);
+--    signal rom_ena_mydogs_color_4of4 : STD_LOGIC;
+--    signal rom_addra_mydogs_color_4of4 : STD_LOGIC_VECTOR(14 downto 0);
+--    signal rom_douta_mydogs_color_4of4 : STD_LOGIC_VECTOR(15 downto 0);
+    
+    signal input : STD_LOGIC_VECTOR (15 downto 0);
+    signal volume : STD_LOGIC_VECTOR (8 downto 0) := "000111111";
 
 begin
 
@@ -160,38 +375,180 @@ begin
      vga_part_rgb : vga_rgb 
         Port map (
             clk => clk_100,
+            
             hc => hc,
             vc => vc,
-            input => input,
-            color => sw (11 downto 0),
-            mode => sw (15 downto 12),
             vidon => vidon,
-            rom_ena_RGB111 => rom_ena_RGB111,
-            rom_addra_RGB111 => rom_addra_RGB111,
-            rom_douta_RGB111 => rom_douta_RGB111,
-            rom_ena_RGB888 => rom_ena_RGB888,
-            rom_addra_RGB888 => rom_addra_RGB888,
-            rom_douta_RGB888 => rom_douta_RGB888,
+            
+            input => input,
+            sw => sw,
+            
+            volume => volume,
+            
+--            rom_ena_RGB111 => rom_ena_RGB111,
+--            rom_addra_RGB111 => rom_addra_RGB111,
+--            rom_douta_RGB111 => rom_douta_RGB111,
+--            rom_ena_RGB888 => rom_ena_RGB888,
+--            rom_addra_RGB888 => rom_addra_RGB888,
+--            rom_douta_RGB888 => rom_douta_RGB888,
+            
+--            rom_ena_mydogs_greyscale => rom_ena_mydogs_greyscale,
+--            rom_addra_mydogs_greyscale => rom_addra_mydogs_greyscale,
+--            rom_douta_mydogs_greyscale => rom_douta_mydogs_greyscale,
+--            rom_ena_mydogs_color => rom_ena_mydogs_color,
+--            rom_addra_mydogs_color => rom_addra_mydogs_color,
+--            rom_douta_mydogs_color => rom_douta_mydogs_color,
+            
+            rom_ena_mydogs_color_1of2 => rom_ena_mydogs_color_1of2,
+            rom_addra_mydogs_color_1of2 => rom_addra_mydogs_color_1of2,
+            rom_douta_mydogs_color_1of2 => rom_douta_mydogs_color_1of2,
+            
+            rom_ena_mydogs_color_2of2 => rom_ena_mydogs_color_2of2,
+            rom_addra_mydogs_color_2of2 => rom_addra_mydogs_color_2of2,
+            rom_douta_mydogs_color_2of2 => rom_douta_mydogs_color_2of2,
+            
+--            rom_ena_mydogs_greyscale_1of4 => rom_ena_mydogs_greyscale_1of4,
+--            rom_addra_mydogs_greyscale_1of4 => rom_addra_mydogs_greyscale_1of4,
+--            rom_douta_mydogs_greyscale_1of4 => rom_douta_mydogs_greyscale_1of4,
+--            rom_ena_mydogs_greyscale_2of4 => rom_ena_mydogs_greyscale_2of4,
+--            rom_addra_mydogs_greyscale_2of4 => rom_addra_mydogs_greyscale_2of4,
+--            rom_douta_mydogs_greyscale_2of4 => rom_douta_mydogs_greyscale_2of4,
+--            rom_ena_mydogs_greyscale_3of4 => rom_ena_mydogs_greyscale_3of4,
+--            rom_addra_mydogs_greyscale_3of4 => rom_addra_mydogs_greyscale_3of4,
+--            rom_douta_mydogs_greyscale_3of4 => rom_douta_mydogs_greyscale_3of4,
+--            rom_ena_mydogs_greyscale_4of4 => rom_ena_mydogs_greyscale_4of4,
+--            rom_addra_mydogs_greyscale_4of4 => rom_addra_mydogs_greyscale_4of4,
+--            rom_douta_mydogs_greyscale_4of4 => rom_douta_mydogs_greyscale_4of4,
+            
+--            rom_ena_mydogs_color_1of4 => rom_ena_mydogs_color_1of4,
+--            rom_addra_mydogs_color_1of4 => rom_addra_mydogs_color_1of4,
+--            rom_douta_mydogs_color_1of4 => rom_douta_mydogs_color_1of4,
+--            rom_ena_mydogs_color_2of4 => rom_ena_mydogs_color_2of4,
+--            rom_addra_mydogs_color_2of4 => rom_addra_mydogs_color_2of4,
+--            rom_douta_mydogs_color_2of4 => rom_douta_mydogs_color_2of4,
+--            rom_ena_mydogs_color_3of4 => rom_ena_mydogs_color_3of4,
+--            rom_addra_mydogs_color_3of4 => rom_addra_mydogs_color_3of4,
+--            rom_douta_mydogs_color_3of4 => rom_douta_mydogs_color_3of4,
+--            rom_ena_mydogs_color_4of4 => rom_ena_mydogs_color_4of4,
+--            rom_addra_mydogs_color_4of4 => rom_addra_mydogs_color_4of4,
+--            rom_douta_mydogs_color_4of4 => rom_douta_mydogs_color_4of4,
+            
             blue => vgaBlue,
             green => vgaGreen,
             red => vgaRed
         );
         
-    rom_test_3bit : rom_test_RGB111
+--    rom_test_3bit : rom_test_RGB111
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_RGB111,
+--            addra => rom_addra_RGB111,
+--            douta => rom_douta_RGB111
+--        );
+        
+--     rom_test_24bit : rom_test_RGB888
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_RGB888,
+--            addra => rom_addra_RGB888,
+--            douta => rom_douta_RGB888
+--        );
+        
+--     rom_mydogs_3bit : rom_mydogs_greyscale
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_greyscale,
+--            addra => rom_addra_mydogs_greyscale,
+--            douta => rom_douta_mydogs_greyscale
+--        );
+        
+--     rom_mydogs_16bit : rom_mydogs_color
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_color,
+--            addra => rom_addra_mydogs_color,
+--            douta => rom_douta_mydogs_color
+--        );
+        
+     rom_mydogs_16bit_1of2 : rom_mydogs_color_1of2
         Port map (
             clka => clk_25,
-            ena => rom_ena_RGB111,
-            addra => rom_addra_RGB111,
-            douta => rom_douta_RGB111
+            ena => rom_ena_mydogs_color_1of2,
+            addra => rom_addra_mydogs_color_1of2,
+            douta => rom_douta_mydogs_color_1of2
         );
         
-     rom_test_24bit : rom_test_RGB888
+     rom_mydogs_16bit_2of2 : rom_mydogs_color_2of2
         Port map (
             clka => clk_25,
-            ena => rom_ena_RGB888,
-            addra => rom_addra_RGB888,
-            douta => rom_douta_RGB888
-        );
+            ena => rom_ena_mydogs_color_2of2,
+            addra => rom_addra_mydogs_color_2of2,
+            douta => rom_douta_mydogs_color_2of2
+        );   
+        
+--     rom_mydogs_3bit_1of4 : rom_mydogs_greyscale_1of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_greyscale_1of4,
+--            addra => rom_addra_mydogs_greyscale_1of4,
+--            douta => rom_douta_mydogs_greyscale_1of4
+--        );
+        
+--     rom_mydogs_3bit_2of4 : rom_mydogs_greyscale_2of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_greyscale_2of4,
+--            addra => rom_addra_mydogs_greyscale_2of4,
+--            douta => rom_douta_mydogs_greyscale_2of4
+--        );
+     
+--     rom_mydogs_3bit_3of4 : rom_mydogs_greyscale_3of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_greyscale_3of4,
+--            addra => rom_addra_mydogs_greyscale_3of4,
+--            douta => rom_douta_mydogs_greyscale_3of4
+--        );
+        
+--     rom_mydogs_3bit_4of4 : rom_mydogs_greyscale_4of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_greyscale_4of4,
+--            addra => rom_addra_mydogs_greyscale_4of4,
+--            douta => rom_douta_mydogs_greyscale_4of4
+--        );
+        
+--     rom_mydogs_16bit_1of4 : rom_mydogs_color_1of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_color_1of4,
+--            addra => rom_addra_mydogs_color_1of4,
+--            douta => rom_douta_mydogs_color_1of4
+--        );
+        
+--     rom_mydogs_16bit_2of4 : rom_mydogs_color_2of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_color_2of4,
+--            addra => rom_addra_mydogs_color_2of4,
+--            douta => rom_douta_mydogs_color_2of4
+--        );
+        
+--     rom_mydogs_16bit_3of4 : rom_mydogs_color_3of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_color_3of4,
+--            addra => rom_addra_mydogs_color_3of4,
+--            douta => rom_douta_mydogs_color_3of4
+--        );
+        
+--     rom_mydogs_16bit_4of4 : rom_mydogs_color_4of4
+--        Port map (
+--            clka => clk_25,
+--            ena => rom_ena_mydogs_color_4of4,
+--            addra => rom_addra_mydogs_color_4of4,
+--            douta => rom_douta_mydogs_color_4of4
+--        );
         
      led <= sw; -- Visual feedback for switches
 

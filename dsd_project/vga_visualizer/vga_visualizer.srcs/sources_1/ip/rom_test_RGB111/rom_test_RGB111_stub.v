@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
-// Date        : Thu Aug 10 16:01:03 2023
+// Date        : Wed Aug 16 14:38:23 2023
 // Host        : Laptop-Bavo running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
-//               c:/Xilinx/Projects/vga_visualizer/vga_visualizer.srcs/sources_1/ip/rom_test_RGB111/rom_test_RGB111_stub.v
+//               C:/Xilinx/Projects/vga_visualizer/vga_visualizer.srcs/sources_1/ip/rom_test_RGB111/rom_test_RGB111_stub.v
 // Design      : rom_test_RGB111
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a35tcpg236-1

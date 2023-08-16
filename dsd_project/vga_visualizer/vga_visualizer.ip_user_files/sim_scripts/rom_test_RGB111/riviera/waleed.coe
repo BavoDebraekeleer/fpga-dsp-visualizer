@@ -1,7 +1,7 @@
 ; VGA Memory Map 
 ; .COE file with binary coefficients 
-; Height: ?, Width: ?
-; 65.536 pixels
+; Height: 256, Width: 256
+; 65536 pixels
 ; RGB111
 
 memory_initialization_radix=2;

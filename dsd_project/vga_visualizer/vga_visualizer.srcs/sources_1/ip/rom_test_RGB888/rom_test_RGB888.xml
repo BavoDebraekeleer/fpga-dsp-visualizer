@@ -4143,7 +4143,7 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Coe_File</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Coe_File" spirit:order="39">d:/Electronica-ICT/3IT_IOT/DSD_Digital_Systems_Development_FPGA_DSP/Project/git/fpga-dsp-visualizer/sources/coe-generator/flower_160x115.coe</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Coe_File" spirit:order="39">../../../../coe/flower_160x115.coe</spirit:value>
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>
