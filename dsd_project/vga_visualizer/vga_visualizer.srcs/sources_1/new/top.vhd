@@ -34,17 +34,20 @@ use IEEE.NUMERIC_STD.all;
 --use UNISIM.VComponents.all;
 
 entity top is
-  Port ( 
-    clk_100 : in STD_LOGIC;
-    reset : in STD_LOGIC; -- Button U18
-    sw : in STD_LOGIC_VECTOR (15 downto 0);
-    led : out STD_LOGIC_VECTOR (15 downto 0);
-    hsync : out STD_LOGIC;
-    vsync : out STD_LOGIC;
-    vgaBlue : out STD_LOGIC_VECTOR (3 downto 0);
-    vgaGreen : out STD_LOGIC_VECTOR (3 downto 0);
-    vgaRed : out STD_LOGIC_VECTOR (3 downto 0)
-  );
+    Port ( 
+        clk_100 : in STD_LOGIC;
+        reset : in STD_LOGIC; -- Button U18
+        
+        sw : in STD_LOGIC_VECTOR (15 downto 0);
+        led : out STD_LOGIC_VECTOR (15 downto 0);
+        
+        hsync : out STD_LOGIC;
+        vsync : out STD_LOGIC;
+        
+        vgaBlue : out STD_LOGIC_VECTOR (3 downto 0);
+        vgaGreen : out STD_LOGIC_VECTOR (3 downto 0);
+        vgaRed : out STD_LOGIC_VECTOR (3 downto 0)
+    );
 end top;
 
 architecture Behavioral of top is
@@ -351,15 +354,15 @@ architecture Behavioral of top is
 
 begin
 
-    -- VGA PARTS --
-    
-    vga_part_clk : clk_25MHz
+    clk : clk_25MHz
         Port map (
             clk_out1 => clk_25,
             reset => reset,
             locked => open,
             clk_in1 => clk_100
         );
+    
+    -- VGA PARTS --
         
     vga_part_sync : vga_sync 
         Port map (
