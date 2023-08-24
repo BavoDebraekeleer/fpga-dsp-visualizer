@@ -24,22 +24,27 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.all; 
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity top is
     Generic (
         -- Audiosystem out width
         FIR_OUT_WIDTH : integer range 8 to 48 := 16;
-        -- Volume adjustment size
-        VOLUME_WIDTH : integer := 4
-        );
+        -- User Inputs
+        COLOR_WIDTH : integer := 12; -- Max. 12-bit color for VGA = Red 4-bit + Green 4-bit + Blue 4-bit
+        MODE_WIDTH : integer := 4; -- 4 modes with 4 switches
+        SELECTION_WIDTH : integer := 4; -- 0 to 15 = 16 (mode3 needs 9, mode4 needs 4)
+        INCREMENT_WIDTH : integer := 4; -- 0 to 15 = 16 levels
+        VOLUME_WIDTH : integer := 4 -- 0 to 15 = 16 levels
+    );
     Port (
         clk_100 : in STD_LOGIC;
-        reset : in STD_LOGIC; -- Button U18
 
+        btnC : in STD_LOGIC;
+        btnU : in STD_LOGIC;
+        btnL : in STD_LOGIC;
+        btnR : in STD_LOGIC;
+        btnD : in STD_LOGIC;
+        
         sw : in STD_LOGIC_VECTOR (15 downto 0);
         led : out STD_LOGIC_VECTOR (15 downto 0);
         
@@ -64,7 +69,7 @@ end top;
 
 architecture Behavioral of top is
     
-    -- COMPONENTS
+-- COMPONENTS --
     
     component clk_25MHz
         Port (
@@ -74,6 +79,34 @@ architecture Behavioral of top is
             clk_in1 : in STD_LOGIC
         );
     end component;
+    
+    component user_input is
+        Port ( 
+            clk : in STD_LOGIC;
+        
+            btnC : in STD_LOGIC;
+            btnU : in STD_LOGIC;
+            btnL : in STD_LOGIC;
+            btnR : in STD_LOGIC;
+            btnD : in STD_LOGIC;
+            
+            sw : in STD_LOGIC_VECTOR (15 downto 0);
+            led : out STD_LOGIC_VECTOR (15 downto 0);
+               
+            reset : out STD_LOGIC;
+            
+            color : out STD_LOGIC_VECTOR (COLOR_WIDTH - 1 downto 0);
+            mode : out STD_LOGIC_VECTOR (MODE_WIDTH - 1 downto 0);
+            
+            selection : out STD_LOGIC_VECTOR (SELECTION_WIDTH - 1 downto 0);
+            increment : out STD_LOGIC_VECTOR (INCREMENT_WIDTH - 1 downto 0);
+            
+            volume_global : out STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_bass : out STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_mid : out STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_treble : out STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0)
+        );   
+    end component user_input;
     
     component audiosystem is
         Port (
@@ -103,10 +136,23 @@ architecture Behavioral of top is
     
     component vga_top is
         Port ( 
-            clk_25 : in STD_LOGIC;
-            reset : in STD_LOGIC; -- Button U18
+            clk_25 : in STD_LOGIC; -- Needs 25MHz clock for 60Hz display
+            reset : in STD_LOGIC;
             
-            sw : in STD_LOGIC_VECTOR (15 downto 0);
+            color : in STD_LOGIC_VECTOR (COLOR_WIDTH - 1 downto 0);
+            mode : in STD_LOGIC_VECTOR (MODE_WIDTH - 1 downto 0);
+            
+            selection : in STD_LOGIC_VECTOR (SELECTION_WIDTH - 1 downto 0);
+            increment : in STD_LOGIC_VECTOR (INCREMENT_WIDTH - 1 downto 0);
+            
+            volume_global : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_bass : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_mid : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            volume_treble : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
+            
+            bass : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            mid : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            treble : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
             
             hsync : out STD_LOGIC;
             vsync : out STD_LOGIC;
@@ -117,9 +163,17 @@ architecture Behavioral of top is
         );
     end component vga_top;
 
-    -- SIGNALS
+-- SIGNALS --
     
     signal clk_25 : STD_LOGIC;
+    signal reset_input : STD_LOGIC;
+    
+    -- VGA user inputs
+    signal vga_color : STD_LOGIC_VECTOR (COLOR_WIDTH - 1 downto 0);
+    signal vga_mode : STD_LOGIC_VECTOR (MODE_WIDTH - 1 downto 0);
+    
+    signal vga_selection : STD_LOGIC_VECTOR (SELECTION_WIDTH - 1 downto 0);
+    signal vga_increment : STD_LOGIC_VECTOR (INCREMENT_WIDTH - 1 downto 0);
     
     -- Volume set by input component (with keyboard or buttons on FPGA?)
     signal volume_global, volume_bass, volume_mid, volume_treble : STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
@@ -128,26 +182,50 @@ architecture Behavioral of top is
     signal bass, mid, treble : STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
 
 begin
-    -- Test inputs - TO-DO: replace with input controls component
-    volume_global <= sw (3 downto 0);
-    volume_bass <= sw (7 downto 4);
-    volume_mid <= sw (11 downto 8);
-    volume_treble <= sw (15 downto 12);
     
-    led <= sw; -- Visual feedback for switches
+--    -- Visual feedback for switches
+--    led <= sw;
+    
+-- PORT MAPPING -- 
 
     clk : clk_25MHz
         Port map (
             clk_out1 => clk_25,
-            reset => reset,
+            reset => reset_input,
             locked => open,
             clk_in1 => clk_100
         );
         
+    input : user_input
+        Port map ( 
+            clk => clk_25,
+        
+            btnC => btnC,
+            btnU => btnU,
+            btnL => btnL,
+            btnR => btnR,
+            btnD => btnD,
+            
+            sw => sw,
+            led => led,
+               
+            reset => reset_input,
+               
+            volume_global => volume_global,
+            volume_bass => volume_bass,
+            volume_mid => volume_mid,
+            volume_treble => volume_treble,
+            
+            color => vga_color,
+            mode => vga_mode,
+            selection => vga_selection,
+            increment => vga_increment
+        );   
+        
     dsp_audio : audiosystem
         Port map (
             clk => clk_25,
-            reset => reset,
+            reset => reset_input,
             
             i2s_mclk_adc => i2s_mclk_adc,
             i2s_bclk_adc => i2s_bclk_adc,
@@ -172,9 +250,22 @@ begin
     vga_visualizer : vga_top 
         Port map ( 
             clk_25 => clk_25,
-            reset => reset,
+            reset => reset_input,
             
-            sw => sw,
+            color => vga_color,
+            mode => vga_mode,
+            
+            selection => vga_selection,
+            increment => vga_increment,
+            
+            volume_global => volume_global,
+            volume_bass => volume_bass,
+            volume_mid => volume_mid,
+            volume_treble => volume_treble,
+            
+            bass => bass,
+            mid => mid,
+            treble => treble,
             
             hsync => hsync,
             vsync => vsync,
