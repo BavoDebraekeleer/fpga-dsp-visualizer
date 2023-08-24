@@ -54,9 +54,10 @@ entity vga_rgb is
         volume_mid : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
         volume_treble : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
             
-        bass : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-        mid : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-        treble : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        global_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        bass_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        mid_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        treble_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
         
         rom_ena_mydogs_color_1of2 : out STD_LOGIC;
         rom_addra_mydogs_color_1of2 : out STD_LOGIC_VECTOR(15 downto 0);
@@ -789,10 +790,180 @@ begin
 --            end if;
                
         -- Draw audio
-            -- Overlapping with background image x 64 to 576
+        -- Overlapping with background image x 64 to 576
+        
+        -- Global below the three bands
+--            -- Global: Median of the three bands
+--            if x >= 64 + 8 and x < 576 - 8 then
+--                if y > 480 - global_din (15 downto 3) then
+--                    red <= "1111";
+--                    green <= "1111";
+--                    blue <= "1111";
+--                end if;
+--            end if;
+            
+--            -- Left: Band 1 - Bass Amplitude
+--            if x >= 64 + 8 and x < 64 + 8 + 160 then -- Between x 68 and 232, 160 pixels wide with 8 pixel gap between bands
+--                if y > 480 - bass_din (15 downto 3) then
+--                    red <= "1111";
+--                    green <= "0000";
+--                    blue <= "0000";
+--                end if;
+--            end if;
+            
+--            -- Middle: Band 2 - Midrange Amplitude
+--            if x >= 232 + 8 and x < 232 + 8 + 160 then -- Between x 232 and 400
+--                if y > 480 - mid_din (15 downto 3) then
+--                    red <= "0000";
+--                    green <= "1111";
+--                    blue <= "0000";
+--                end if;
+--            end if;
+            
+--            -- Right: Band 3 - Treble Amplitude
+--            if x >= 400 + 8 and x < 576 - 8 then -- Between x 408 and 316
+--                if y > 480 - treble_din (15 downto 3) then
+--                    red <= "0000";
+--                    green <= "0000";
+--                    blue <= "1111";
+--                end if;
+--            end if;
+--        end if;
+
+--        -- 4 seperate bars -- Inverted photo (not super visible
+--        -- 118 pixels wide with 8 pixel gap between bands
+--            -- Global: Median of the three bands
+--            if x >= 64 + 8 and x < 64 + 8 + 118 then
+--                if y > 480 - global_din (15 downto 3) then
+--                    -- Photo Inverted
+--                    if x >= 64 and x < 256 + 64 then
+--                        rom_ena_mydogs_color_1of2 <= '1';
+--                        rom_addra_mydogs_color_1of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62; -- x-64 gives seem, y+0 gives artifact at top
+                        
+--                        red <= not rom_douta_mydogs_color_1of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_1of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_1of2 (1 downto 0) & "01";
+                        
+--                    elsif x >= 256 + 64 and x < 512 + 64 then
+--                        rom_ena_mydogs_color_2of2 <= '1';
+--                        rom_addra_mydogs_color_2of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62;
+                        
+--                        red <= not rom_douta_mydogs_color_2of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_2of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_2of2 (1 downto 0) & "01";
+--                    end if;
+--                end if;
+--            end if;
+            
+--            -- Left: Band 1 - Bass Amplitude
+--            if x >= 64 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 then 
+--                if y > 480 - bass_din (15 downto 3) then
+--                    -- Photo Inverted
+--                    if x >= 64 and x < 256 + 64 then
+--                        rom_ena_mydogs_color_1of2 <= '1';
+--                        rom_addra_mydogs_color_1of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62; -- x-64 gives seem, y+0 gives artifact at top
+                        
+--                        red <= not rom_douta_mydogs_color_1of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_1of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_1of2 (1 downto 0) & "01";
+                        
+--                    elsif x >= 256 + 64 and x < 512 + 64 then
+--                        rom_ena_mydogs_color_2of2 <= '1';
+--                        rom_addra_mydogs_color_2of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62;
+                        
+--                        red <= not rom_douta_mydogs_color_2of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_2of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_2of2 (1 downto 0) & "01";
+--                    end if;
+--                end if;
+--            end if;
+            
+--            -- Middle: Band 2 - Midrange Amplitude
+--            if x >= 64 + 8 + 118 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 + 8 + 118 then
+--                if y > 480 - mid_din (15 downto 3) then
+--                    -- Photo Inverted
+--                    if x >= 64 and x < 256 + 64 then
+--                        rom_ena_mydogs_color_1of2 <= '1';
+--                        rom_addra_mydogs_color_1of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62; -- x-64 gives seem, y+0 gives artifact at top
+                        
+--                        red <= not rom_douta_mydogs_color_1of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_1of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_1of2 (1 downto 0) & "01";
+                        
+--                    elsif x >= 256 + 64 and x < 512 + 64 then
+--                        rom_ena_mydogs_color_2of2 <= '1';
+--                        rom_addra_mydogs_color_2of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62;
+                        
+--                        red <= not rom_douta_mydogs_color_2of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_2of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_2of2 (1 downto 0) & "01";
+--                    end if;
+--                end if;
+--            end if;
+            
+--            -- Right: Band 3 - Treble Amplitude
+--            if x >= 64 + 8 + 118 + 8 + 118 + 8 + 118 + 8 + 8 and x < 576 - 8 then -- Between x 408 and 316
+--                if y > 480 - treble_din (15 downto 3) then
+--                    -- Photo Inverted
+--                    if x >= 64 and x < 256 + 64 then
+--                        rom_ena_mydogs_color_1of2 <= '1';
+--                        rom_addra_mydogs_color_1of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62; -- x-64 gives seem, y+0 gives artifact at top
+                        
+--                        red <= not rom_douta_mydogs_color_1of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_1of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_1of2 (1 downto 0) & "01";
+                        
+--                    elsif x >= 256 + 64 and x < 512 + 64 then
+--                        rom_ena_mydogs_color_2of2 <= '1';
+--                        rom_addra_mydogs_color_2of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62;
+                        
+--                        red <= not rom_douta_mydogs_color_2of2 (7 downto 5) & '0';
+--                        green <= not rom_douta_mydogs_color_2of2 (4 downto 2) & '0';
+--                        blue <= not rom_douta_mydogs_color_2of2 (1 downto 0) & "01";
+--                    end if;
+--                end if;
+            
+--            -- Left: Band 1 - Bass Amplitude
+--            if x >= 64 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 then 
+--                if y > 480 - bass_din (15 downto 3) then
+--                    red <= "0000";
+--                    green <= "0000";
+--                    blue <= "1111";
+--                end if;
+--            end if;
+            
+--            -- Middle: Band 2 - Midrange Amplitude
+--            if x >= 64 + 8 + 118 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 + 8 + 118 then
+--                if y > 480 - mid_din (15 downto 3) then
+--                    red <= "0000";
+--                    green <= "0000";
+--                    blue <= "1111";
+--                end if;
+--            end if;
+            
+--            -- Right: Band 3 - Treble Amplitude
+--            if x >= 64 + 8 + 118 + 8 + 118 + 8 + 118 + 8 + 8 and x < 576 - 8 then -- Between x 408 and 316
+--                if y > 480 - treble_din (15 downto 3) then
+--                    red <= "0000";
+--                    green <= "0000";
+--                    blue <= "1111";
+--            end if;
+--        end if;
+        
+        -- 4 seperate bars -- Inverted photo (not super visible
+        -- 118 pixels wide with 8 pixel gap between bands
+            -- Global: Median of the three bands
+            if x >= 64 + 8 and x < 64 + 8 + 118 then
+                if y > 480 - global_din (15 downto 3) then
+                    red <= "1111";
+                    green <= "1111";
+                    blue <= "1111";
+                end if;
+            end if;
+            
             -- Left: Band 1 - Bass Amplitude
-            if x >= 64 + 8 and x < 64 + 8 + 160 then -- Between x 68 and 232, 160 pixels wide with 8 pixel gap between bands
-                if y > 480 - bass (15 downto 3) then
+            if x >= 64 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 then 
+                if y > 480 - bass_din (15 downto 3) then
                     red <= "1111";
                     green <= "0000";
                     blue <= "0000";
@@ -800,8 +971,8 @@ begin
             end if;
             
             -- Middle: Band 2 - Midrange Amplitude
-            if x >= 232 + 8 and x < 232 + 8 + 160 then -- Between x 232 and 400
-                if y > 480 - mid (15 downto 3) then
+            if x >= 64 + 8 + 118 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 + 8 + 118 then
+                if y > 480 - mid_din (15 downto 3) then
                     red <= "0000";
                     green <= "1111";
                     blue <= "0000";
@@ -809,14 +980,15 @@ begin
             end if;
             
             -- Right: Band 3 - Treble Amplitude
-            if x >= 400 + 8 and x < 576 - 8 then -- Between x 408 and 316
-                if y > 480 - treble (15 downto 3) then
+            if x >= 64 + 8 + 118 + 8 + 118 + 8 + 118 + 8 and x < 576 - 8 then -- Between x 408 and 316
+                if y > 480 - treble_din (15 downto 3) then
                     red <= "0000";
                     green <= "0000";
                     blue <= "1111";
-                end if;
             end if;
         end if;
+        
+    end if;
         
     end process;
 

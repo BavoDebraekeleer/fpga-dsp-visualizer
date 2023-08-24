@@ -50,9 +50,10 @@ entity vga_top is
         volume_mid : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
         volume_treble : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
             
-        bass : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-        mid : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-        treble : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        global_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        bass_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        mid_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+        treble_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
         
         hsync : out STD_LOGIC;
         vsync : out STD_LOGIC;
@@ -98,9 +99,10 @@ architecture Behavioral of vga_top is
             volume_mid : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
             volume_treble : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
             
-            bass : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-            mid : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
-            treble : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            global_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            bass_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            mid_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
+            treble_din : in STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
             
             rom_ena_mydogs_color_1of2 : out STD_LOGIC;
             rom_addra_mydogs_color_1of2 : out STD_LOGIC_VECTOR(15 downto 0);
@@ -189,9 +191,10 @@ begin
             selection => selection,
             increment => increment,
             
-            bass => bass,
-            mid => mid,
-            treble => treble,
+            global_din => global_din,
+            bass_din => bass_din,
+            mid_din => mid_din,
+            treble_din => treble_din,
             
             rom_ena_mydogs_color_1of2 => rom_ena_mydogs_color_1of2,
             rom_addra_mydogs_color_1of2 => rom_addra_mydogs_color_1of2,

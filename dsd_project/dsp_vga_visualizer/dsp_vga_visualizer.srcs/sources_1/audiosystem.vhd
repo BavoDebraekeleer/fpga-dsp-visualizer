@@ -38,6 +38,7 @@ entity audiosystem is
         volume_mid : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
         volume_treble : in STD_LOGIC_VECTOR (VOLUME_WIDTH - 1 downto 0);
         
+        global_dout : out STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
         bass_dout : out STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
         mid_dout : out STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0);
         treble_dout : out STD_LOGIC_VECTOR (FIR_OUT_WIDTH - 1 downto 0)
@@ -223,9 +224,10 @@ begin
     i2s_r_dout <= fir_dout_3band_me_vol;
     
     -- Outputs of all three bands for visualization
-    bass_dout <= STD_LOGIC_VECTOR(fir_bass_dout_vol (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH)); -- (23 downto 8)
-    mid_dout <= STD_LOGIC_VECTOR(fir_mid_dout_vol (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH)); -- (23 downto 8)
-    treble_dout <= STD_LOGIC_VECTOR(fir_treble_dout_vol (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH)); -- (23 downto 8)
+    global_dout <= STD_LOGIC_VECTOR( fir_dout_3band_me_vol (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH) ); -- (23 downto 8)
+    bass_dout <= STD_LOGIC_VECTOR( volume_shifting_24bit(volume_global, fir_bass_dout_vol) (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH) ); -- (23 downto 8)
+    mid_dout <= STD_LOGIC_VECTOR( volume_shifting_24bit(volume_global, fir_mid_dout_vol) (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH) ); -- (23 downto 8)
+    treble_dout <= STD_LOGIC_VECTOR( volume_shifting_24bit(volume_global, fir_treble_dout_vol) (I2S_IN_WIDTH - 1 downto I2S_IN_WIDTH - FIR_IN_WIDTH) ); -- (23 downto 8)
 
     
 -- Component Port Mapping =============================================================================
