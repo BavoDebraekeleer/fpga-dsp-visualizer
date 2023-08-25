@@ -14,11 +14,25 @@
 
 
 
-## Project Goals
+
+
+### Project Goals
 
 TO DO
 
+### Hardware
 
+- [Digilent Basys 3 Artix-7 FPGA Trainer Board](https://digilent.com/shop/basys-3-artix-7-fpga-trainer-board-recommended-for-introductory-users/) featuring the Xilinx Artix-7 FPGA XC7A35T-1CPG236C, part number: xc7a35tcpg236-1
+- [Digilent Pmod I2S2](https://digilent.com/reference/pmod/pmodi2s2/reference-manual) stereo audio receiver/transmitter featuring a [Cirrus CS5343 Multi-Bit Audio A/D Converter](https://www.cirrus.com/products/cs5343-44/) and a [Cirrus CS4344 Stereo D/A Converter](https://www.cirrus.com/products/cs4344-45-48/).
+- Monitor with VGA port
+
+### Software
+
+- Vivado 2019.2 for FPGA development in VHDL.
+- MATLAB R2021b for filter designing.
+- [Coefficient Translator by Dimitar H. Marinov aka DHMarinov](https://github.com/DHMarinov/Coefficient-Translator) to translate floating point filter coefficients from MATLAB too HEX VHDL code.
+- Adobe Photoshop 2023 for photo editing.
+- [coetool by Javier Quintano Merino aka jaXvi (2014)](http://jqm.io/files/coetool/) to translate a 24- or 32-bit bitmap image to a 16-bit RGB332 (3-bit Red, 3-bit Green and 2-bit Blue channels) coefficient file that can be used in Block Memory on an FPGA.
 
 ## Development Plan
 
