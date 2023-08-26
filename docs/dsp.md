@@ -2,11 +2,11 @@
 
 ## Table of Contents
 
-[Introduction](#introduction)
+1. **[Introduction](#introduction)**
 
-[Explaining the Functionality](#explaining-the-functionality)
+2. **[Explaining the Functionality](#explaining-the-functionality)**
 
-[Troubleshooting](#troubleshooting)
+3. **[Troubleshooting](#troubleshooting)**
 
 
 ## Overview
