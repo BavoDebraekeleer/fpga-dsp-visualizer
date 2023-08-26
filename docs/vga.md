@@ -20,7 +20,28 @@ TO DO
   - Visuals: reading inputs and ROM, and deciding the visuals to output. (vga_rgb.vhd)
   - 2x ROM: holds a 256x256px (16-bit address) RGB332 (2xHEX = 16-bit coefficients) photo split up in two seperate files. (Block Memory IP)
 
-![Diagram](./diagram.svg)
+![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
+*Elaborated Design Schematic Entire Project in Vivado*
+
+![Elaborated Design Schematic of VGA Visualizer in Vivado](./assets/schematics/full-elaborated-design-schematic-vga.png)
+*Elaborated Design Schematic of VGA Visualizer Vivado*
+
+##### VGA Synchronization
+
+![Elaborated Design Schematic of VGA Synchronization in Vivado](./assets/schematics/full-elaborated-design-schematic-vga-sync.png)
+*Elaborated Design Schematic of VGA Synchronization Vivado*
+
+##### VGA Visuals
+
+This schematic is too big to view, but can always be viewed in Vivado.
+
+![Elaborated Design Schematic of VGA Visuals in Vivado](./assets/schematics/full-elaborated-design-schematic-vga-rgb.png)
+*Elaborated Design Schematic of VGA Visuals Vivado*
+
+##### ROM Block Memory
+
+![Elaborated Design Schematic of ROM in Vivado](./assets/schematics/full-elaborated-design-schematic-vga-ROM.png ':size=200')
+*Elaborated Design Schematic of ROM Block Memory Vivado*
 
 
 ## Explaining the Functionality

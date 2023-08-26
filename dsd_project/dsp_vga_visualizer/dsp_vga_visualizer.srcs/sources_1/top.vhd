@@ -47,8 +47,6 @@ entity top is
         sw : in STD_LOGIC_VECTOR (15 downto 0);
 
         led : out STD_LOGIC_VECTOR (15 downto 0);
-        seg : out STD_LOGIC_VECTOR (6 downto 0);  -- 7 display segments, active low!
-        an : out STD_LOGIC_VECTOR (3 downto 0);   -- Anodes outputs, active low
         
         -- PmodI2S2
         i2s_mclk_adc : out std_logic;

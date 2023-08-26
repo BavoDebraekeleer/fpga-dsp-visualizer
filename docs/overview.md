@@ -78,13 +78,13 @@ The different parts are discussed in their own separate sections.
   - Visuals: reading inputs and ROM, and deciding the visuals to output. (vga_rgb.vhd)
   - 2x ROM: holds a 256x256px (16-bit address) RGB332 (2xHEX = 16-bit coefficients) photo split up in two seperate files. (Block Memory IP)
 
-![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
-*Elaborated Design Schematic in Vivado*
-
 ![Internal Components List in Vivado](./assets/overview/internal-components-list.png)
 *Internal Components List in Vivado*
 
+![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
+*Elaborated Design Schematic in Vivado*
 
+All component schematics can be found in the [End Results](/results.md#all-schematics) section.
 
 ### Used Software
 
