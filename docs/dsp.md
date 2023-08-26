@@ -9,13 +9,17 @@
 3. **[Troubleshooting](#troubleshooting)**
 
 
-## Overview
+## Introduction
 
 TO DO
 
 ### Components
 
-Diagrams and schematics
+- Digital Signal Processing (audiosystem.vhd)
+  - I2S Receiver/Transmitter (i2s_rxtx.vhd)
+  - Audio Band 1 - Bass: Lowpass FIR filter using DSP48E1 slices. (FIR_bass.vhd)
+  - Audio Band 2 - Midrange: Bandpass FIR filter using DSP slices. (FIR_mid.vhd)
+  - Audio Band 3 - Treble: Bandpass FIR filter using DSP slices. (FIR_treble.vhd)
 
 ![Diagram](./diagram.svg)
 

@@ -9,13 +9,16 @@
 3. **[Troubleshooting](#troubleshooting)**
 
 
-## Overview
+## Introduction
 
 TO DO
 
 ### Components
 
-Diagrams and schematics
+- VGA Visualizer (vga_top.vhd)
+  - Synchronization: providing the correctly timed synchronization for a 60Hz 640x480px VGA monitor. (vga_sync.vhd)
+  - Visuals: reading inputs and ROM, and deciding the visuals to output. (vga_rgb.vhd)
+  - 2x ROM: holds a 256x256px (16-bit address) RGB332 (2xHEX = 16-bit coefficients) photo split up in two seperate files. (Block Memory IP)
 
 ![Diagram](./diagram.svg)
 

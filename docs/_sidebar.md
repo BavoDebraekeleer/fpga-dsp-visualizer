@@ -1,6 +1,6 @@
-* [README](README.md)
+[README](README.md)
 
-* [Overview](/overview.md)
+1. [Overview](/overview.md)
 
   * [Introduction](/overview.md#introduction)
 
@@ -10,7 +10,7 @@
 
   * [Future Development](/overview.md#future-development)
 
-* [User Inputs](/user-inputs.md)
+2. [User Inputs](/user-inputs.md)
 
   * [Introduction](/user-inputs.md#introduction)
 
@@ -18,7 +18,7 @@
 
   * [Troubleshooting](/user-inputs.md#troubleshooting)
 
-* [Digital Signal Processing](/dsp.md)
+3. [Digital Signal Processing](/dsp.md)
 
   * [Introduction](/dsp.md#introduction)
 
@@ -26,7 +26,7 @@
 
   * [Troubleshooting](/dsp.md#troubleshooting)
 
-* [VGA Visualizer](/vga.md)
+4. [VGA Visualizer](/vga.md)
 
   * [Introduction](/vga.md#introduction)
 
@@ -34,4 +34,12 @@
 
   * [Troubleshooting](/vga.md#troubleshooting)
 
-* [Cited Works](/cited-works.md)
+5. [Project Results](/results.md)
+
+  * [Operation Instructions](/results.md#operation-instructions)
+
+  * [Media](/results.md#media)
+
+  * [All Schematics](/results.md#all-schematics)
+
+6. [Cited Works](/cited-works.md)

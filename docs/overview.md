@@ -25,7 +25,8 @@ Audio is sampled throught the Digilent Pmod I2S2 of which a single channel is pu
 These four signals are also send too the VGA driver to be visualized.
 As an extra to test the VGA and ROM Block Memory functionality the visualizer has a photo background and some basic image processing.
 
-
+![End Result Photo](/assets/)
+*End Result Photo*
 
 ---
 
@@ -34,11 +35,19 @@ As an extra to test the VGA and ROM Block Memory functionality the visualizer ha
 
 The project is split up into three parts:
 
-1. **User Inputs**: processing switch state changes and button presses and translating them into usable data.
-2. **Digital Signal Processing**: sampling the audio, filtering the samples through FIR filters using DSP slices and transmitting the results to the VGA Visualizer and back out to a speaker.
-3. **VGA Visualizer**: visualizing the filtered audio signals using the VGA output, reading from ROM Block Memory, and some basic image processing.
+1. **[User Inputs](/user-inputs.md)**: processing switch state changes and button presses and translating them into usable data.
+2. **[Digital Signal Processing](/dsp.md)**: sampling the audio, filtering the samples through FIR filters using DSP slices and transmitting the results to the VGA Visualizer and back out to a speaker.
+3. **[VGA Visualizer](/vga.md)**: visualizing the filtered audio signals using the VGA output, reading from ROM Block Memory, and some basic image processing.
 
-The actual development is done in reversed order to more easily verify the correct workings through visuals.
+The actual development is done in reversed order. By having the VGA part working first there is an extra option to visualize the other parts and verify their desired behavior.
+
+The different parts are discussed in their own separate sections.
+
+### Phases
+
+1. The first phase is to research the different components and to gather resources and IP.
+2. The second phase is to test the individual components and make sure they all work separately.
+3. The third and last phase is to bring everything together to a working whole using the top file.
 
 
 ### Components of the project
@@ -50,6 +59,7 @@ The actual development is done in reversed order to more easily verify the corre
 - Monitor with VGA port (right side block)
 
 ![Project External Block Diagram](./assets/overview/dsd-project-external-block-diagram.jpg)
+*Project External Block Diagram*
 
 #### Internal Components
 
@@ -68,15 +78,13 @@ The actual development is done in reversed order to more easily verify the corre
   - Visuals: reading inputs and ROM, and deciding the visuals to output. (vga_rgb.vhd)
   - 2x ROM: holds a 256x256px (16-bit address) RGB332 (2xHEX = 16-bit coefficients) photo split up in two seperate files. (Block Memory IP)
 
+![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
+*Elaborated Design Schematic in Vivado*
+
 ![Internal Components List in Vivado](./assets/overview/internal-components-list.png)
+*Internal Components List in Vivado*
 
-![Elaborated Design Schematic in Vivado](./assets/overview/full-elaborated-design-schematic.png)
 
-### Phases
-
-1. The first phase is to research the different components and to gather resources and IP.
-2. The second phase is to test the individual components and make sure they all work separately.
-3. The third and last phase is to bring everything together to a working whole using the top file.
 
 ### Used Software
 
@@ -84,7 +92,7 @@ The actual development is done in reversed order to more easily verify the corre
 - MATLAB R2021b for filter designing.
 - [Coefficient Translator by Dimitar H. Marinov aka DHMarinov](https://github.com/DHMarinov/Coefficient-Translator) to translate floating point filter coefficients from MATLAB too HEX VHDL code.
 - Adobe Photoshop 2023 for photo editing.
-- [coetool by Javier Quintano Merino aka jaXvi (2014)](http://jqm.io/files/coetool/) to translate a 24- or 32-bit bitmap image to a 16-bit RGB332 (3-bit Red, 3-bit Green and 2-bit Blue channels) coefficient file that can be used in Block Memory on an FPGA.
+- [Coetool v1 by Javier Quintano Merino aka jaXvi (2014)](http://jqm.io/files/coetool/) to translate a 24- or 32-bit bitmap image to a 16-bit RGB332 (3-bit Red, 3-bit Green and 2-bit Blue channels) coefficient file that can be used in Block Memory on an FPGA.
 
 ---
 
