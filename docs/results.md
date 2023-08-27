@@ -2,13 +2,194 @@
 
 ## Operation Instructions
 
----
+### Hardware setup
+
+Set the hardware up as follows:
+
+- Connect the FPGA Board to a power source.
+- Connect the VGA to a monitor.
+- Connect the AUX Output of the Pmod I2S2 to a speaker.
+- Connect the AUX Input the a music player and play some good music.
+
+### Controls
+
+The controls are as follows:
+- The user can set the VGA Visuals Mode (SW15-12) and 12-bit RGB444 background color (SW11-0) through the switches on the board. The selection being verified by the corresponding LED's above the switches.
+
+- The Center button is the reset.
+
+- The Left and Right buttons are used to make a selection within the set mode.
+
+- While the Up and Down buttons are used to increase and decrease a parameter of the selection. Either the increment of an Image Processing type in Mode 3, or the volume in Mode 4.
+
+![User Inputs with Basic I/O on FPGA Basys3 Board](/assets/user-inputs/Xilinx-Basys3-Artix7-top-user_inputs.jpg)
 
 ## Media
 
-{% include youtube.html id="08UG52QsN5Y" %}
+### Demo Videos
 
-{% include youtube.html id="vY7orHpOu2c" %} 
+<div class="embed-container">
+    <iframe width="640" height="390"
+    src="https://www.youtube.com/embed/08UG52QsN5Y"
+    frameborder="0" allowfullscreen></iframe>
+</div>
+<div class="embed-container">
+    <iframe width="640" height="390"
+    src="https://www.youtube.com/embed/vY7orHpOu2c"
+    frameborder="0" allowfullscreen></iframe>
+</div>
+<style>
+.embed-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+.embed-container iframe,
+.embed-container object,
+.embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+### Photos
+
+![Board Setup](/assets/media/result-board-setup.jpg)
+
+*Board Setup*
+
+#### Mode 0: Color
+
+![Mode 0: Color - Overview](/assets/media/result-mode0-board-landscape.jpg)
+
+*Mode 0: Color - Overview*
+
+![Mode 0: Color - Board](/assets/media/result-mode0-board-portrait.jpg)
+
+*Mode 0: Color - Board*
+
+#### Mode 1: Grid
+
+![Mode 1: Grid - Overview](/assets/media/result-mode1-board-landscape.jpg)
+
+*Mode 1: Grid - Overview*
+
+![Mode 1: Grid - Board](/assets/media/result-mode1-board-portrait.jpg)
+
+*Mode 1: Grid - Board*
+
+![Mode 1: Grid - Screen](/assets/media/result-mode1-screen.jpg)
+
+*Mode 1: Grid - Screen*
+
+#### Mode 2: Color Palette
+
+![Mode 2: Color Palette - Overview](/assets/media/result-mode2-board-landscape.jpg)
+
+*Mode 2: Color Palette - Overview*
+
+![Mode 2: Color Palette - Board](/assets/media/result-mode2-board-portrait.jpg)
+
+*Mode 2: Color Palette - Board*
+
+![Mode 2: Color Palette - Screen](/assets/media/result-mode2-screen.jpg)
+
+*Mode 2: Color Palette - Screen*
+
+#### Mode 3: Image Processing
+
+![Mode 3: Image Processing - Overview](/assets/media/result-mode3-board-landscape.jpg)
+
+*Mode 3: Image Processing - Overview*
+
+![Mode 3: Image Processing - Board](/assets/media/result-mode3-board-portrait.jpg)
+
+*Mode 3: Image Processing - Board*
+
+##### Color (original)
+
+![Mode 3: Image Processing - Color](/assets/media/result-mode3-screen-1.jpg)
+
+*Mode 3: Image Processing - Color*
+
+##### Greyscale Equation
+
+![Mode 3: Image Processing - Greyscale Equation](/assets/media/result-mode3-screen-2.jpg)
+
+*Mode 3: Image Processing - Greyscale Equation*
+
+##### Greyscale Median
+
+![Mode 3: Image Processing - Greyscale Median](/assets/media/result-mode3-screen-3.jpg)
+
+*Mode 3: Image Processing - Greyscale Median*
+
+##### Brightness Increase
+
+![Mode 3: Image Processing - Brightness Increase](/assets/media/result-mode3-screen-4.jpg)
+
+*Mode 3: Image Processing - Brightness Increase*
+
+##### Brightness Decrease
+
+![Mode 3: Image Processing - Brightness Decrease](/assets/media/result-mode3-screen-5.jpg)
+
+*Mode 3: Image Processing - Brightness Decrease*
+
+##### Inverted
+
+![Mode 3: Image Processing - Inverted](/assets/media/result-mode3-screen-6.jpg)
+
+*Mode 3: Image Processing - Inverted*
+
+##### Filtering Out Blue
+
+![Mode 3: Image Processing - Filtering Out Blue](/assets/media/result-mode3-screen-7.jpg)
+
+*Mode 3: Image Processing - Filtering Out Blue*
+
+##### Filtering Out Green
+
+![Mode 3: Image Processing - Filtering Out Green](/assets/media/result-mode3-screen-8.jpg)
+
+*Mode 3: Image Processing - Filtering Out Green*
+
+##### Filtering Out Red
+
+![Mode 3: Image Processing - Filtering Out Red](/assets/media/result-mode3-screen-9.jpg)
+
+*Mode 3: Image Processing - Filtering Out Red*
+
+#### Mode 4: Audio Visualizer
+
+![Mode 4: Audio Visualizer - Overview](/assets/media/result-mode4-board-landscape.jpg)
+
+*Mode 4: Audio Visualizer - Overview*
+
+![Mode 4: Audio Visualizer - Board](/assets/media/result-mode4-board-portrait1.jpg)
+
+*Mode 4: Audio Visualizer - Board*
+
+![Mode 4: Audio Visualizer - Board (Closer))](/assets/media/result-mode4-board-portrait2.jpg)
+
+*Mode 4: Audio Visualizer - Board (Closer))*
+
+![Mode 4: Audio Visualizer - Screen](/assets/media/result-mode4-screen.jpg)
+
+*Mode 4: Audio Visualizer - Screen*
+
+![Mode 4: Audio Visualizer - Screen 15kHz](/assets/media/result-mode4-screen-15kHz.jpg)
+
+*Mode 4: Audio Visualizer - Screen 15kHz*
+
+![Mode 4: Audio Visualizer - Screen 300Hz](/assets/media/result-mode4-screen-300Hz.jpg)
+
+*Mode 4: Audio Visualizer - Screen 300Hz*
 
 ---
 
