@@ -23,10 +23,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity FIR_bass is 
     Generic (
@@ -47,7 +43,7 @@ architecture Behavioral of FIR_bass is
 
     -- Force Vivado to use of DSP-slices when possible
     attribute use_dsp : string;
-     attribute use_dsp of Behavioral : architecture is "yes";
+    attribute use_dsp of Behavioral : architecture is "yes";
 
     -- Port widths for the DSP slice
     constant MAC_WIDTH : integer := COE_WIDTH + IN_WIDTH;

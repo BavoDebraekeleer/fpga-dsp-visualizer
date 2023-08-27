@@ -26,7 +26,12 @@ These four signals are also send too the VGA driver to be visualized.
 As an extra to test the VGA and ROM Block Memory functionality the visualizer has a photo background and some basic image processing.
 
 ![End Result Photo](/assets/)
+
 *End Result Photo*
+
+![End Result Hardware Implementation Utilization](/assets/full-project-utilization.png 'size=500')
+
+*End Result Hardware Implementation Utilization*
 
 ---
 
@@ -59,6 +64,7 @@ The different parts are discussed in their own separate sections.
 - Monitor with VGA port (right side block)
 
 ![Project External Block Diagram](./assets/overview/dsd-project-external-block-diagram.jpg)
+
 *Project External Block Diagram*
 
 #### Internal Components
@@ -79,9 +85,11 @@ The different parts are discussed in their own separate sections.
   - 2x ROM: holds a 256x256px (16-bit address) RGB332 (2xHEX = 16-bit coefficients) photo split up in two seperate files. (Block Memory IP)
 
 ![Internal Components List in Vivado](./assets/overview/internal-components-list.png)
+
 *Internal Components List in Vivado*
 
 ![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
+
 *Elaborated Design Schematic in Vivado*
 
 All component schematics can be found in the [End Results](/results.md#all-schematics) section.

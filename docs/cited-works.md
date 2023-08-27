@@ -12,6 +12,10 @@ Counter in VHDL with debouncer. (n.d.). https://www.maxybyte.com/p/counter-in-vh
 
 ## Digital Signal Processing
 
+Wikipedia contributors. (2023). Finite impulse response. Wikipedia. https://en.wikipedia.org/wiki/Finite_impulse_response
+
+AMD Adaptive Computing Documentation Portal. (n.d.). https://docs.xilinx.com/v/u/en-US/ug479_7Series_DSP48E1
+
 Dimitar H. Marinov. (2021, January 9). FPGA and DSP ep. 1:Efficient parallel FIR filter implementation on FPGA [Video]. YouTube. https://www.youtube.com/watch?v=_1LlX-V5yCA
 
 DHMarinov. (n.d.-a). GitHub - DHMarinov/Coefficient-Translator: Filter coefficient translator. GitHub. https://github.com/DHMarinov/Coefficient-Translator

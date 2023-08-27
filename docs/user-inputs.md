@@ -8,6 +8,8 @@
 
 3. **[Troubleshooting](#troubleshooting)**
 
+---
+
 
 ## Introduction
 
@@ -26,6 +28,7 @@ The controls are as follows:
 - While the Up and Down buttons are used to increase and decrease a parameter of the selection. Either the increment of an Image Processing type in Mode 3, or the volume in Mode 4.
 
 ![User Inputs with Basic I/O on FPGA Basys3 Board](/assets/user-inputs/Xilinx-Basys3-Artix7-top-user_inputs.jpg)
+
 *User Inputs with Basic I/O on FPGA Basys3 Board*
 
 #### Visual Modes
@@ -51,9 +54,11 @@ The Visual Modes are:
     - Button press detector: provides a single rising edge pulse when button is pressed and held down. (btn_press.vhd)
 
 ![Elaborated Design Schematic in Vivado](./assets/schematics/full-elaborated-design-schematic.png)
-  *Elaborated Design Schematic Entire Project in Vivado*
+
+*Elaborated Design Schematic Entire Project in Vivado*
 
 ![Elaborated Design Schematic of User Inputs in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs.png)
+
 *Elaborated Design Schematic of User Inputs in Vivado*
 
 ##### Button Press 4-bit Counter
@@ -61,9 +66,11 @@ The Visual Modes are:
 Counts up/down on a button press with a set maximum count. There is a looping and non-looping variant.
 
 ![Elaborated Design Schematic of 4-bit Counter that counts up/down on button press, variant with maximum value, in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_counter4bit_updown_looping-counter_selection_LR.png)
+
 *Elaborated Design Schematic of 4-bit Looping Counter that counts up/down on button press, variant with maximum value, in Vivado*
 
 ![Elaborated Design Schematic of 4-bit Counter that counts up/down on button press, variant with maximum value, in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_counter4bit_updown_nonlooping-counter_increment_UD.png)
+
 *Elaborated Design Schematic of 4-bit Non-looping Counter that counts up/down on button press, no maxmimum value, in Vivado*
 
 ##### Components of the 4-bit Counter
@@ -78,12 +85,13 @@ Counts up/down on a button press with a set maximum count. There is a looping an
 ###### Clock Devider 100MHz to 100Hz
 
 ![Elaborated Design Schematic of Clock Devider 100MHz to 100Hz in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-clk_div.png)
+
 *Elaborated Design Schematic of Clock Devider 100MHz to 100Hz in Vivado*
 
 
-## Explaining the Functionality
+---
 
-*Reproduceerbaarheid / Tutorial achtige uitleg zoals de slides van de cursus.*
+## Explaining the Functionality
 
 The data set by the switches are easily read and written to the LED's and as outputs of the top file of this part `user_input.vhd` as shown below.
 
@@ -122,47 +130,47 @@ The top file also handles the enables for the button counters, so that only the 
 
 ```vhdl
 counter_enables : process (mode, selection)
-    begin
-        if mode = "0111" then
-            selection_max <= selection_mode3_max;
-            increment_enable <= '1';
+begin
+    if mode = "0111" then
+        selection_max <= selection_mode3_max;
+        increment_enable <= '1';
 
-            volume_global_enable <= '0';
+        volume_global_enable <= '0';
+        volume_bass_enable <= '0';
+        volume_mid_enable <= '0';
+        volume_treble_enable <= '0';
+
+    elsif mode = "1111" then
+        selection_max <= selection_mode4_max;
+        increment_enable <= '0';
+
+        if selection = "0000" then
+            volume_global_enable <= '1';
             volume_bass_enable <= '0';
             volume_mid_enable <= '0';
             volume_treble_enable <= '0';
 
-        elsif mode = "1111" then
-            selection_max <= selection_mode4_max;
-            increment_enable <= '0';
+        elsif selection = "0001" then
+            volume_global_enable <= '0';
+            volume_bass_enable <= '1';
+            volume_mid_enable <= '0';
+            volume_treble_enable <= '0';
 
-            if selection = "0000" then
-                volume_global_enable <= '1';
-                volume_bass_enable <= '0';
-                volume_mid_enable <= '0';
-                volume_treble_enable <= '0';
+        elsif selection = "0010" then
+            volume_global_enable <= '0';
+            volume_bass_enable <= '0';
+            volume_mid_enable <= '1';
+            volume_treble_enable <= '0';
 
-            elsif selection = "0001" then
-                volume_global_enable <= '0';
-                volume_bass_enable <= '1';
-                volume_mid_enable <= '0';
-                volume_treble_enable <= '0';
+        elsif selection = "0011" then
+            volume_global_enable <= '0';
+            volume_bass_enable <= '0';
+            volume_mid_enable <= '0';
+            volume_treble_enable <= '1';
 
-            elsif selection = "0010" then
-                volume_global_enable <= '0';
-                volume_bass_enable <= '0';
-                volume_mid_enable <= '1';
-                volume_treble_enable <= '0';
-
-            elsif selection = "0011" then
-                volume_global_enable <= '0';
-                volume_bass_enable <= '0';
-                volume_mid_enable <= '0';
-                volume_treble_enable <= '1';
-
-            end if;
         end if;
-    end process;
+    end if;
+end process;
 ```
 
 The more complex part here is having 4-bit counters that only counts once when a button is pressed or hold. To do this debouncing and edge detection is needed on the signal from the buttons. Otherwise mechanical bouncing of the buttons, as well as holding the button down to long (speaking in fractions of a second here depending on the clock frequency) will result in extra and unwanted counting. Furthermore, for this project, it is also required to have a looping and a non-looping counter, and being able to set a maximum count value the counter won't go past. Looping in this context means the counter starts back at zero when the counter goes past the maximum value, or the other way around. Non-looping stops at 0 or the maximum value.
@@ -213,7 +221,7 @@ end component clk_div;
 
 The Clock Devider counts to 500 000 clock ticks, adding 1 on every rising edge of the 100MHz input clock. For the tick counting an integer is used, using IEEE.numeric_std.ALL library. This makes the ticks stay in its range from 0 to 499 999, so it simply starts from 0 once counting goes beyond its maximum of 499 999. Everytime the ticks hit 0 the clock output is inverted. This results in a rising edge every 1 000 000 ticks resulting in 100Hz:
 
-> 100 000 000 / 1 000 000 = 100
+> 100 000 000 / 1 000 000 = 100 Hz = 10 ms
 
 It also features a synchronous reset which produces a rising edge on the next clock tick.
 
@@ -247,6 +255,7 @@ end Behavioral;
 ```
 
 ![Elaborated Design Schematic of Clock Devider 100MHz to 100Hz in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-clk_div.png)
+
 *Elaborated Design Schematic of Clock Devider 100MHz to 100Hz in Vivado*
 
 ### Button Press Detector
@@ -270,9 +279,35 @@ end component btn_press;
 First the debouncing happens by shifting the button signal through a 4-bit SIPO shift registers, built from four D-type Flip-flops as shown below, on every rising edge of the 100Hz clock.
 
 ![4-bit SIPO shift registers, built from four D-type Flip-flops](/assets/user-inputs/4bit-SIPO-shift-reg.png)
+
 *4-bit SIPO shift registers, built from four D-type Flip-flops*
 
 The debounced button signal only produces HIGH when all four flip-flops are set, meaning the HIGH state from the original button signal has lasted for 40 milliseconds (100Hz = 10ms) without going to LOW due to bouncing, so we can conclude that the bouncing has stopped.
+
+```vhdl
+signal Q : STD_LOGIC_VECTOR (3 downto 0); -- Q's in 4 D-type Flip-flops
+
+...
+
+-- Debouncing the button press
+-- 4-bit SIPO shift register of 4 D-type flip-flops
+-- D = input signal, Q = output signal
+btn_debouncing_shift_reg : process (clk_100MHz)
+begin
+    if rising_edge(clk_100MHz) then
+        if reset = '1' then
+            Q <= (others=>'0');
+        elsif clk_100Hz = '1' then
+            Q(0) <= btn_in; -- btn_in represent the D input signal from D-type Flip-flops
+            Q (3 downto 1) <= Q (2 downto 0);
+        end if;
+    end if;
+end process;
+
+btn_deb <= '1' when Q = "1111" else '0'; -- The debounced input singal
+
+...
+```
 
 ##### Rising Edge Detection
 
@@ -283,40 +318,78 @@ Thus if the current state is HIGH and the previous state is LOW the button is pr
 When the following clock tick now gives HIGH and HIGH the output goes back to LOW creating the pulse.
 
 ```vhdl
-architecture Behavioral of btn_press is
+signal btn_deb : STD_LOGIC;
+signal btn_buffer1, btn_buffer2 : STD_LOGIC;
 
-    signal Q : STD_LOGIC_VECTOR (3 downto 0); -- Q's in 4 D-type Flip-flops
-    signal btn_deb : STD_LOGIC;
-    signal btn_buffer1, btn_buffer2 : STD_LOGIC;
+...
 
+-- Edge detection
+rising_edge_detection : process(clk_100MHz)
 begin
+    if rising_edge(clk_100MHz) then
+        btn_buffer1 <= btn_deb; -- Current state
+        btn_buffer2 <= btn_buffer1; -- Previous state
 
-    -- Debouncing the button press
-    -- 4-bit SIPO shift register of 4 D-type flip-flops
-    -- D = input signal, Q = output signal
-    shift_register : process (clk_100MHz)
-    begin
-        if rising_edge(clk_100MHz) then
-            if reset = '1' then
-                Q <= (others=>'0');
-            elsif clk_100Hz = '1' then
-                Q(0) <= btn_in; -- btn_in represent the D input signal from D-type Flip-flops
-                Q (3 downto 1) <= Q (2 downto 0);
-            end if;
+        if reset = '1' then
+            btn_buffer1 <= '0';
+            btn_buffer2 <= '0';
+        elsif btn_buffer1 = '1' and btn_buffer2 = '0' then -- Ouputs a single one clock period when the button state change from LOW to HIGH.
+            btn_pulse <= '1';
+        else
+            btn_pulse <= '0';
         end if;
-    end process;
+    end if;
+end process;
+```
 
-    btn_deb <= '1' when Q = "1111" else '0'; -- The debounced input singal
+##### Both Together
 
-    -- Rising edge detection
-    btn_buffer1 <= btn_deb when rising_edge(clk_100MHz); -- Current state
-    btn_buffer2 <= btn_buffer1 when rising_edge(clk_100MHz); -- Previous state
-    btn_pulse <= btn_buffer1 and not btn_buffer2; -- Ouputs a single one clock period when the button state change from LOW to HIGH.
+```vhdl
+signal Q : STD_LOGIC_VECTOR (3 downto 0); -- Q's in 4 D-type Flip-flops
+signal btn_deb : STD_LOGIC;
+signal btn_buffer1, btn_buffer2 : STD_LOGIC;
 
-end Behavioral;
+...
+
+-- Debouncing the button press
+-- 4-bit SIPO shift register of 4 D-type flip-flops
+-- D = input signal, Q = output signal
+btn_debouncing_shift_reg : process (clk_100MHz)
+begin
+    if rising_edge(clk_100MHz) then
+        if reset = '1' then
+            Q <= (others=>'0');
+        elsif clk_100Hz = '1' then
+            Q(0) <= btn_in; -- btn_in represent the D input signal from D-type Flip-flops
+            Q (3 downto 1) <= Q (2 downto 0);
+        end if;
+    end if;
+end process;
+
+btn_deb <= '1' when Q = "1111" else '0'; -- The debounced input singal
+
+
+-- Edge detection
+rising_edge_detection : process(clk_100MHz)
+begin
+    if rising_edge(clk_100MHz) then
+        btn_buffer1 <= btn_deb; -- Current state
+        btn_buffer2 <= btn_buffer1; -- Previous state
+
+        if reset = '1' then
+            btn_buffer1 <= '0';
+            btn_buffer2 <= '0';
+        elsif btn_buffer1 = '1' and btn_buffer2 = '0' then -- Ouputs a single one clock period when the button state change from LOW to HIGH.
+            btn_pulse <= '1';
+        else
+            btn_pulse <= '0';
+        end if;
+    end if;
+end process;
 ```
 
 ![Elaborated Design Schematic of Button Press Detector in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_press.png)
+
 *Elaborated Design Schematic of Button Press Detector in Vivado*
 
 ### Counter
@@ -397,6 +470,7 @@ counter_inout <= std_logic_vector(counter);
 ```
 
 ![Elaborated Design Schematic of 4-bit Counter that counts up/down on button press, variant with maximum value, in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_counter4bit_updown_looping-counter_selection_LR.png)
+
 *Elaborated Design Schematic of 4-bit Looping Counter that counts up/down on button press, variant with maximum value, in Vivado*
 
 ##### Non-looping Counter
@@ -433,6 +507,7 @@ counter_inout <= std_logic_vector(counter);
 ```
 
 ![Elaborated Design Schematic of 4-bit Counter that counts up/down on button press, variant with maximum value, in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_counter4bit_updown_nonlooping-counter_increment_UD.png)
+
 *Elaborated Design Schematic of 4-bit Non-looping Counter that counts up/down on button press, no maxmimum value, in Vivado*
 
 In the top file the Port mapping of all the counters is as follows:
@@ -505,9 +580,10 @@ counter_volume_treble_UD : btn_counter4bit_updown_nonlooping
     );
 ```
 
-## Troubleshooting
 
-*Ervaarde moeilijkheden / gevonden oplossingen*
+---
+
+## Troubleshooting
 
 I initially struggled with the button presses. I did not think I would need the rising edge detection on the button signal. The result obviously did not result in what I expected.
 
@@ -534,12 +610,13 @@ btn_pulse <= btn_buffer1 and not btn_buffer2; -- Can result in a second pulse wh
 ```
 
 ![Elaborated Design Schematic of Button Press Detector example version in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_press-old.png)
+
 *Elaborated Design Schematic of Button Press Detector example version in Vivado*
 
 I replaced this with a process with the correct behavior, as well as a synchronous reset for the buffers.
 
 ```vhdl
-rising_edge_detection : process(clk_100Hz)
+rising_edge_detection : process(clk_100MHz)
 begin
     if rising_edge(clk_100MHz) then
         btn_buffer1 <= btn_deb; -- Current state
@@ -558,6 +635,7 @@ end process;
 ```
 
 ![Elaborated Design Schematic of Button Press Detector in Vivado](./assets/schematics/full-elaborated-design-schematic-user_inputs-btn_press.png)
+
 *Elaborated Design Schematic of Button Press Detector in Vivado*
 
 

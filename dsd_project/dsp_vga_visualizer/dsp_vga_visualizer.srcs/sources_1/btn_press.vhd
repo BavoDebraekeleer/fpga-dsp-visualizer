@@ -40,7 +40,7 @@ begin
     
     
     -- Edge detection
-    rising_edge_detection : process(clk_100Hz)
+    rising_edge_detection : process(clk_100MHz)
     begin
         if rising_edge(clk_100MHz) then
             btn_buffer1 <= btn_deb; -- Current state
