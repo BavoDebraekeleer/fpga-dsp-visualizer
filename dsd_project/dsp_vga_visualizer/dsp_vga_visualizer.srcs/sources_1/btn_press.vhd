@@ -24,7 +24,7 @@ begin
     -- Debouncing the button press
     -- 4-bit SIPO shift register of 4 D-type flip-flops
     -- D = input signal, Q = output signal
-    shift_register : process (clk_100MHz)
+    btn_debouncing_shift_reg : process (clk_100MHz)
     begin
         if rising_edge(clk_100MHz) then
             if reset = '1' then
@@ -38,9 +38,23 @@ begin
 
     btn_deb <= '1' when Q = "1111" else '0'; -- The debounced input singal
     
-    -- Rising edge detection
-    btn_buffer1 <= btn_deb when rising_edge(clk_100MHz); -- Current state
-    btn_buffer2 <= btn_buffer1 when rising_edge(clk_100MHz); -- Previous state
-    btn_pulse <= btn_buffer1 and not btn_buffer2; -- Ouputs a single one clock period when the button state change from LOW to HIGH.
+    
+    -- Edge detection
+    rising_edge_detection : process(clk_100Hz)
+    begin
+        if rising_edge(clk_100MHz) then
+            btn_buffer1 <= btn_deb; -- Current state
+            btn_buffer2 <= btn_buffer1; -- Previous state
+        
+            if reset = '1' then
+                btn_buffer1 <= '0';
+                btn_buffer2 <= '0';
+            elsif btn_buffer1 = '1' and btn_buffer2 = '0' then -- Ouputs a single one clock period when the button state change from LOW to HIGH.
+                btn_pulse <= '1';
+            else
+                btn_pulse <= '0';
+            end if;
+        end if;
+    end process;
  
 end Behavioral;

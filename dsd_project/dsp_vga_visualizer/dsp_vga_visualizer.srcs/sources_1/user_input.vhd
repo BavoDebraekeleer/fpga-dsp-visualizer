@@ -88,6 +88,7 @@ architecture Behavioral of user_input is
             counter_inout : inout STD_LOGIC_VECTOR (3 downto 0)
         );
     end component btn_counter4bit_updown_nonlooping;
+ 
     
 -- CONSTANTS --
 
@@ -97,6 +98,8 @@ architecture Behavioral of user_input is
 -- SIGNALS --
     
     signal reset : STD_LOGIC;
+    
+    signal clk_deb : STD_LOGIC;
     
     signal mode : STD_LOGIC_VECTOR (MODE_WIDTH - 1 downto 0);
     signal color : STD_LOGIC_VECTOR (11 downto 0);
@@ -115,7 +118,6 @@ architecture Behavioral of user_input is
 
 begin
     
-    -- Async Reset
     reset <= btnC; -- Reset button
 
     -- Display mode for VGA output and color selection with switches on FPGA.
@@ -169,15 +171,6 @@ begin
     led (11 downto 0) <= color;
     led (15 downto 12) <= mode;
     
---    led(3) <= btnL;
---    led(2) <= btnU;
---    led(1) <= btnD;
---    led(0) <= btnR;
-    
---    led (7 downto 4) <= increment;
---    led (11 downto 8) <= selection;
---    led (15 downto 12) <= volume_global;
-    
     -- Data outputs
     reset_dout <= reset;
     
@@ -192,6 +185,7 @@ begin
     volume_mid_dout <= volume_mid;
     volume_treble_dout <= volume_treble;
 
+
 -- PORT MAPPING --
         
     counter_selection_LR : btn_counter4bit_updown_looping
@@ -204,7 +198,7 @@ begin
             count_max => selection_max,
             counter_inout => selection
         );
-        
+    
     counter_increment_UD : btn_counter4bit_updown_nonlooping
         Port map (
             clk_100MHz => clk_100,
@@ -215,7 +209,7 @@ begin
             count_max => "1111",
             counter_inout => increment
         );
-        
+    
     counter_volume_global_UD : btn_counter4bit_updown_nonlooping
         Port map (
             clk_100MHz => clk_100,
@@ -226,7 +220,7 @@ begin
             count_max => "1111",
             counter_inout => volume_global
         );
-        
+    
     counter_volume_bass_UD : btn_counter4bit_updown_nonlooping
         Port map (
             clk_100MHz => clk_100,
@@ -237,7 +231,7 @@ begin
             count_max => "1111",
             counter_inout => volume_bass
         );
-        
+    
     counter_volume_mid_UD : btn_counter4bit_updown_nonlooping
         Port map (
             clk_100MHz => clk_100,
@@ -248,7 +242,7 @@ begin
             count_max => "1111",
             counter_inout => volume_mid
         );
-        
+    
     counter_volume_treble_UD : btn_counter4bit_updown_nonlooping
         Port map (
             clk_100MHz => clk_100,

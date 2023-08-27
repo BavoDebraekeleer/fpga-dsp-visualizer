@@ -12,25 +12,28 @@ entity clk_div is
 end clk_div;
  
 architecture Behavioral of clk_div is
- 
-    signal counter : integer range 0 to 999999;
- 
+
+    signal ticks : integer range 0 to 499999 := 0;
+    signal clk_out : STD_LOGIC;
+
 begin
- 
+
     clock_divider_definition : process (clk_100MHz)
     begin
         if rising_edge(clk_100MHz) then
             if reset = '1' then
-                counter <= 0;
-                clk_100Hz <= '1';
-            elsif counter > 250 then
-                counter <= counter + 1;
-                clk_100Hz <= '0';
+                ticks <= 499999;
+                clk_out <= '0';
             else
-                counter <= 0;
-                clk_100Hz <= '1';
+                ticks <= ticks + 1;
+
+                if ticks = 0 then
+                    clk_out <= not clk_out;
+                end if;
             end if;
         end if;
     end process;
- 
+
+    clk_100Hz <= clk_out;
+
 end Behavioral;
