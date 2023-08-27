@@ -6,6 +6,10 @@
 
 ## Media
 
+{% include youtube.html id="08UG52QsN5Y" %}
+
+{% include youtube.html id="vY7orHpOu2c" %} 
+
 ---
 
 ## All Schematics
