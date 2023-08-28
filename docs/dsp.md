@@ -59,15 +59,15 @@ The following schematic is too large the view, so following it are zoomed in par
 
 ##### FIR Filter
 
-![Elaborated Design Schematic of FIR Filter in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir.png)
+![Elaborated Design Schematic of FIR Filter in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR.png)
 
 *Elaborated Design Schematic of FIR Filter Vivado*
 
-![Elaborated Design Schematic of FIR Filter Start in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir-start.png)
+![Elaborated Design Schematic of FIR Filter Start in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR-start.png)
 
 *Elaborated Design Schematic of FIR Filter Start Vivado*
 
-![Elaborated Design Schematic of FIR Filter End in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir-end.png)
+![Elaborated Design Schematic of FIR Filter End in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR-end.png)
 
 *Elaborated Design Schematic of FIR Filter End Vivado*
 

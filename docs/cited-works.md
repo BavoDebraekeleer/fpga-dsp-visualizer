@@ -30,6 +30,8 @@ LED Music visualizer - Blog 2: Filter Designs and Simulations. (2022, April 26).
 
 Ing. Dirk Van Merode MSc. *Educational_demo_vga_keyboard*
 
+Diligent. (2019). Basys 3TM FPGA Board Reference Manual (Revised July 10, 2019 This manual applies to the Basys 3 rev. C) [PDF]. https://digilent.com/reference/_media/basys3:basys3_rm.pdf
+
 Green, W. (2023, July 14). Beginning FPGA Graphics. Project F. https://projectf.io/posts/fpga-graphics/
 
 Green, W. (2021, October 19). Video timings: VGA, SVGA, 720p, 1080p. Project F. https://projectf.io/posts/video-timings-vga-720p-1080p/

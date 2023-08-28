@@ -263,15 +263,15 @@ The following schematic is too large the view, so following it are zoomed in par
 
 ##### FIR Filter
 
-![Elaborated Design Schematic of FIR Filter in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir.png)
+![Elaborated Design Schematic of FIR Filter in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR.png)
 
 *Elaborated Design Schematic of FIR Filter Vivado*
 
-![Elaborated Design Schematic of FIR Filter Start in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir-start.png)
+![Elaborated Design Schematic of FIR Filter Start in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR-start.png)
 
 *Elaborated Design Schematic of FIR Filter Start Vivado*
 
-![Elaborated Design Schematic of FIR Filter End in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-fir-end.png)
+![Elaborated Design Schematic of FIR Filter End in Vivado](./assets/schematics/full-elaborated-design-schematic-dsp-FIR-end.png)
 
 *Elaborated Design Schematic of FIR Filter End Vivado*
 
@@ -361,17 +361,17 @@ In the implementation schematic of the FIR filter it is clearly visible that the
 
 ###### Complete FIR Filter
 
-![Implementation Schematic of Complete FIR Filter in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR.png)
+![Implementation Schematic FIR Filter in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR.png)
 
 *Implementation Schematic of Complete FIR Filter in Vivado*
 
 ###### DSP48E1 slices Start
 
-![Implementation Schematic of DSP48E1 slices in FIR Filter Start in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR-DSP48E1_slices-start.png)
+![Implementation Schematic of DSP48E1 Start in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR-DSP48E1_slices-start.png)
 
 *Implementation Schematic of DSP48E1 slices in FIR Filter Start in Vivado*
 
-![Implementation Schematic of DSP48E1 slices in FIR Filter End in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR-DSP48E1_slices-end.png)
+![Implementation Schematic of DSP48E1 End in Vivado](./assets/schematics/full-implementation-schematic-dsp-FIR-DSP48E1_slices-end.png)
 
 *Implementation Schematic of DSP48E1 slices in FIR Filter End in Vivado*
 

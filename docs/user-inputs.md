@@ -35,7 +35,7 @@ The controls are as follows:
 
 The Visual Modes are:
 
-0. Mode <= '0000' - Color: Only the background color.
+0. Mode <= '0000' - Color: Setting the background color with switches SW11-0.
 
 1. Mode <= "0001" - Color Grid: A grid is shown on the screen to verify synchronization accuracy.
 
