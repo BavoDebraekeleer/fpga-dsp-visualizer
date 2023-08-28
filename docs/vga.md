@@ -113,6 +113,11 @@ Some excellent ones are:
 
   - [Green, W. (2021, October 19). Video timings: VGA, SVGA, 720p, 1080p. Project F.](https://projectf.io/posts/video-timings-vga-720p-1080p/)
 
+
+![Actual VGA pixel size, Green, W.](/assets/vga/display-timings.png)
+
+*Actual VGA pixel size, Green, W.*
+
 ### Syncronization
 
 The most important part of VGA is the synchronization. The specifications need to be followed (almost) exactly to get the correct results.
@@ -298,7 +303,11 @@ ROM can be created by using the Block Memory IP in Vivado.
 
 To read the ROM the port A Enable (ena) must be set HIGH and the address to be read must be passed to Port A Address (addra). Now the the data on that address can be read out on the Data Output Port A (douta).
 
-Note: the pipelined Mux size is 16x1. Data wider than 16-bits will take additional clock cycles.
+Note:
+
+  - The pipelined Mux size is 16x1. Data wider than 16-bits will take additional clock cycles.
+
+  - Only one coefficient, representing on pixel, can be read at a time.
 
 ```vhdl
 component rom_mydogs_color_1of2 is
@@ -689,7 +698,11 @@ elsif mode = "0111" and vidon = '1' then
 
 ##### Color (original)
 
-The image is read from ROM and show it on screen
+The image is read from ROM and show on screen.
+The enable is set and the address given for the active pixel.
+By using `y (8 downto 1)` instead of `y (7 downto 0)` the image is stretched vertically.
+
+RGB332 is being used instead of the full RGB444 of VGA, so this needs to be compensated by concatinating extra bits at the LSB.
 
 ```vhdl
     -- Color
@@ -717,6 +730,9 @@ The image is read from ROM and show it on screen
 *Mode 3: Image Processing - Color*
 
 ##### Greyscale 1: Equation
+
+Here, greyscale is achieved more weight to certain bits and color channels than others.
+This preserves more detail in the shadows and has a high contrast overall.
 
 ```vhdl
 
@@ -759,6 +775,9 @@ end if;
 
 ##### Greyscale 2: Median
 
+Here, greyscale is achieved by using the median of all three channels on all channels.
+This results in a lighter balanced image.
+
 ```vhdl
 -- Greyscale 2
 elsif selection = "0010" then
@@ -797,6 +816,11 @@ end if;
 *Mode 3: Image Processing - Greyscale 2 - Median*
 
 ##### Brightness Up/Increase
+
+The brightness of an image can be increased by adding a constant value to all channels.
+With addition of STD_LOGIC_VECTORS there is compensation needed for overflow.
+The channel can already hold "1111" when the increment adds "1111".
+The store the sum an extra bit is added to the width of this regiter, and overflow is corrected.
 
 ```vhdl
 -- Brightness Up
@@ -852,6 +876,11 @@ end if;
 *Mode 3: Image Processing - Brightness Increase*
 
 ##### Brightness Down/Decrease
+
+The brightness of an image can be decreased by substracting a constant value of all channels.
+With substraction of STD_LOGIC_VECTORS there is compensation needed for underflow.
+Therefore the increment value is checked before it is substracted.
+If the increment value is larger than the channel's value it is simply set to zero.
 
 ```vhdl
 -- Brightness Down
@@ -924,6 +953,8 @@ end if;
 
 ##### Inverted Colors
 
+Invertinf the colors of an image is very easy thanks to the NOT-gate.
+
 ```vhdl
 -- Inverted
 elsif selection = "0101" then
@@ -949,7 +980,10 @@ end if;
 
 *Mode 3: Image Processing - Inverted*
 
-##### Filtering Out Blue
+##### Filtering Out Red
+
+Filtering out a specific color is similair to decreasing the brightness.
+Only here the increment is only substracted from the channel that needs to be filtered out.
 
 ```vhdl
 -- Red Filter
@@ -998,11 +1032,14 @@ elsif x >= 256 + 64 and x < 512 + 64 then
 end if;
 ```
 
-![Mode 3: Image Processing - Filtering Out Blue](/assets/media/result-mode3-screen-7.jpg)
+![Mode 3: Image Processing - Filtering Out Red](/assets/media/result-mode3-screen-7.jpg)
 
-*Mode 3: Image Processing - Filtering Out Blue*
+*Mode 3: Image Processing - Filtering Out Red*
 
 ##### Filtering Out Green
+
+Filtering out a specific color is similair to decreasing the brightness.
+Only here the increment is only substracted from the channel that needs to be filtered out.
 
 ```vhdl
 -- Green Filter
@@ -1055,7 +1092,10 @@ end if;
 
 *Mode 3: Image Processing - Filtering Out Green*
 
-##### Filtering Out Red
+##### Filtering Out Blue
+
+Filtering out a specific color is similair to decreasing the brightness.
+Only here the increment is only substracted from the channel that needs to be filtered out.
 
 ```vhdl
 -- Blue Filter
@@ -1102,26 +1142,165 @@ elsif x >= 256 + 64 and x < 512 + 64 then
     green <= g (3 downto 0);
     blue <= b (3 downto 0);
 end if;
-
-end if;
 ```
 
-![Mode 3: Image Processing - Filtering Out Red](/assets/media/result-mode3-screen-9.jpg)
+![Mode 3: Image Processing - Filtering Out Blue](/assets/media/result-mode3-screen-9.jpg)
 
-*Mode 3: Image Processing - Filtering Out Red*
+*Mode 3: Image Processing - Filtering Out Blue*
 
 #### Mode 4: Audio Visualizer
-
-```vhdl
-Code block
-```
 
 ![Mode 4: Audio Visualizer - Screen](/assets/media/result-mode4-screen.jpg)
 
 *Mode 4: Audio Visualizer - Screen*
 
+##### Screen Layout
+
+- Left side: Global volume bar (background color set with switches, bar is inverted color)
+- Right side: Three bands volume bars (bass, midrange and treble, in that order from left to right)
+- Middle:
+    - White: Global audio samples
+    - Red: Bass audio samples
+    - Green: Midrange audio samples
+    - Blue: Treble audio samples
+    - 512 x 480 background image
+
+##### Background Color
+
 ```vhdl
-Code block
+elsif mode = "1111" and vidon = '1' then
+    red <= color (11 downto 8);
+    green <= color (7 downto 4);
+    blue <= color (3 downto 0);
+```
+
+##### Background Image
+
+```vhdl
+    if x >= 64 and x < 256 + 64 then
+        rom_ena_mydogs_color_1of2 <= '1';
+        rom_addra_mydogs_color_1of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62; -- x-64 gives seem, y+0 gives artifact at top
+
+        red <= rom_douta_mydogs_color_1of2 (7 downto 5) & '0';
+        green <= rom_douta_mydogs_color_1of2 (4 downto 2) & '0';
+        blue <= rom_douta_mydogs_color_1of2 (1 downto 0) & "01";
+
+    elsif x >= 256 + 64 and x < 512 + 64 then
+        rom_ena_mydogs_color_2of2 <= '1';
+        rom_addra_mydogs_color_2of2 <= y (8 downto 1) + 2 & x (7 downto 0) - 62;
+
+        red <= rom_douta_mydogs_color_2of2 (7 downto 5) & '0';
+        green <= rom_douta_mydogs_color_2of2 (4 downto 2) & '0';
+        blue <= rom_douta_mydogs_color_2of2 (1 downto 0) & "01";
+    end if;
+```
+
+##### Left Side: Global Volume vertical bar
+
+The volume bars use the inverted background color to always have high contrast and good visibility.
+The input volume is bit shifted five to the left, so one increment in volume represents 32 pixels of the volume bar.
+
+> 32 x 15 = 480
+
+To draw the bar the y-coordinate simply needs to be high or equal to the vertical size of the screen minus the shifted volume value. It works from the bottom up while the counter goes from top to bottom.
+
+The bar is 64 pixels wide with 8 pixel gaps on both sides.
+
+```vhdl
+volume_global_shift <= volume_global & "00000";
+
+    ...
+
+    if x >= 8 and x < 64 - 8 then
+        if y >= 480 - volume_global_shift then
+            red <= not color (11 downto 8);
+            green <= not color (7 downto 4);
+            blue <= not color (3 downto 0);
+        end if;
+    end if;
+```
+
+##### Left Side: Bands Volume vertical bars
+
+Same as Global Volume bar, but three thinner bars of 11 pixels each.
+
+```vhdl
+volume_bass_shift <= volume_bass & "00000";
+volume_mid_shift <= volume_mid & "00000";
+volume_treble_shift <= volume_treble & "00000";
+
+...
+
+
+-- Bottom: Band 1 - Bass Volume
+       if  x >= 640 - 64 + 8 and x < 640 - 64 + 8 + 11 then
+           if y >= 480 - volume_bass_shift then
+               red <= not color (11 downto 8);
+               green <= not color (7 downto 4);
+               blue <= not color (3 downto 0);
+           end if;
+       end if;
+
+       -- Middle: Band 2 - Midrange Volume
+       if  x >= 640 - 64 + 8 + 11 + 8 and x < 640 - 64 + 8 + 11 + 8 + 11 then
+           if y >= 480 - volume_mid_shift then
+               red <= not color (11 downto 8);
+               green <= not color (7 downto 4);
+               blue <= not color (3 downto 0);
+           end if;
+       end if;
+
+       -- Top: Band 3 - Treble Volume
+       if  x >= 640 - 64 + 8 + 11 + 8 + 11 + 8 and x < 640 - 64 + 8 + 11 + 8 + 11 + 8 + 11 then
+           if y >= 480 - volume_treble_shift then
+               red <= not color (11 downto 8);
+               green <= not color (7 downto 4);
+               blue <= not color (3 downto 0);
+           end if;
+       end if;
+```
+
+##### Audio Samples
+
+Four seperate bars, from left to right: Global, Bass, Midrange and Treble.
+Each 118 pixels in width with 8 pixel gaps, drawn over the area of the background image.
+
+```vhdl
+    -- Global: Median of the three bands
+    if x >= 64 + 8 and x < 64 + 8 + 118 then
+        if y > 480 - global_din (15 downto 3) then
+            red <= "1111";
+            green <= "1111";
+            blue <= "1111";
+        end if;
+    end if;
+
+    -- Left: Band 1 - Bass Amplitude
+    if x >= 64 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 then
+        if y > 480 - bass_din (15 downto 3) then
+            red <= "1111";
+            green <= "0000";
+            blue <= "0000";
+        end if;
+    end if;
+
+    -- Middle: Band 2 - Midrange Amplitude
+    if x >= 64 + 8 + 118 + 8 + 118 + 8 and x < 64 + 8 + 118 + 8 + 118 + 8 + 118 then
+        if y > 480 - mid_din (15 downto 3) then
+            red <= "0000";
+            green <= "1111";
+            blue <= "0000";
+        end if;
+    end if;
+
+    -- Right: Band 3 - Treble Amplitude
+    if x >= 64 + 8 + 118 + 8 + 118 + 8 + 118 + 8 and x < 576 - 8 then -- Between x 408 and 316
+        if y > 480 - treble_din (15 downto 3) then
+            red <= "0000";
+            green <= "0000";
+            blue <= "1111";
+    end if;
+end if;
 ```
 
 
@@ -1251,6 +1430,6 @@ These two files already take in 64% of the available BRAM, so splitting it up fu
 
 In the Image Processing mode especially, but also in the timing of the images, I had some difficulties with operations by working with STD_LOGIC_VECTORS. You also can't cast in if-statement expression. So extra registers in between are sometimes needed, but can mess with the timing.
 
-```vhdl
-Code block
-```
+### More Advanced Image processing
+
+More advanced image processing requires pixels to be read that are not currently active to be used in calculations and written back to RAM. This is timing wise not possible in the current implementation of the VGA Visuals `vga_rgb.vhd`, but might be possible in a seperate component using the 100MHz clock instead of 25MHz.

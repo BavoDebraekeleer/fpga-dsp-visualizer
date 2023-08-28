@@ -129,3 +129,4 @@ Testing and validation is done in the following steps:
 - Add extra audio bands.
 - Use a PS2 keyboard as user input instead of the boards built-in I/O.
 - Use a Rotary Encoder Pmod as user interface.
+- Implementing more advanced image processing types that require read/write of RAM and calculations on pixels that are not active.
