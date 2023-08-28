@@ -4,7 +4,7 @@ A Digilent Basys 3 Artix-7 FPGA Trainer Board student project for Digital System
 
 By Bavo Debraekeleer
 
-![AP University logo](/assets/logo_ap_white_en.png ':size=400' ':align=left')
+![AP University logo](/assets/logo_ap_white_en.png ':size=400')
 
 ---
 
