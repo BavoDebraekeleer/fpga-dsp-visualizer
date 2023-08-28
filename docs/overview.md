@@ -25,11 +25,35 @@ Audio is sampled throught the Digilent Pmod I2S2 of which a single channel is pu
 These four signals are also send too the VGA driver to be visualized.
 As an extra to test the VGA and ROM Block Memory functionality the visualizer has a photo background and some basic image processing.
 
-![End Result Photo](/assets/)
+![End Result Photo](/assets/media/result-mode4-board-landscape.jpg)
 
 *End Result Photo*
 
-![End Result Hardware Implementation Utilization](/assets/full-project-utilization.png 'size=500')
+<div class="embed-container">
+    <iframe width="640" height="390"
+    src="https://www.youtube.com/embed/08UG52QsN5Y"
+    frameborder="0" allowfullscreen></iframe>
+</div>
+<style>
+.embed-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+.embed-container iframe,
+.embed-container object,
+.embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+![End Result Hardware Implementation Utilization](/assets/full-project-utilization.png ':size=500')
 
 *End Result Hardware Implementation Utilization*
 

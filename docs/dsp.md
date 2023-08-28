@@ -518,7 +518,7 @@ Numerator:
 
 ##### Coefficients Translater tool by Dimitar H. Marinov
 
-![Coefficients Translater tool, Dimitar H. Marinov](/assets/dsp/coe/coefficient-translator.png 'size=500')
+![Coefficients Translater tool, Dimitar H. Marinov](/assets/dsp/coe/coefficient-translator.png)
 
 *Coefficients Translater tool, Dimitar H. Marinov*
 

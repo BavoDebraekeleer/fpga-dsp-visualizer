@@ -89,7 +89,7 @@ This schematic is too big to view, but can always be viewed in Vivado.
 
 ##### ROM Block Memory IP
 
-![Elaborated Design Schematic of ROM in Vivado](./assets/schematics/full-elaborated-design-schematic-vga-ROM.png ':size=200')
+![Elaborated Design Schematic of ROM in Vivado](./assets/schematics/full-elaborated-design-schematic-vga-ROM.png ':size=400')
 
 *Elaborated Design Schematic of ROM Block Memory Vivado*
 
@@ -289,15 +289,15 @@ end Behavioral;
 
 ROM can be created by using the Block Memory IP in Vivado.
 
-![Block Memory IP in Vivado - Basic Options](./assets/vga/ROM-BlockMemoryIP-1.png)
+![Block Memory IP in Vivado - Basic Options](./assets/vga/ROM-BlockMemoryIP-1.png ':size=500')
 
 *Block Memory IP in Vivado - Basic Options*
 
-![Block Memory IP in Vivado - Port A Options](./assets/vga/ROM-BlockMemoryIP-2.png)
+![Block Memory IP in Vivado - Port A Options](./assets/vga/ROM-BlockMemoryIP-2.png ':size=500')
 
 *Block Memory IP in Vivado - Port A Options*
 
-![Block Memory IP in Vivado - Other Options & .coe file](./assets/vga/ROM-BlockMemoryIP-3.png)
+![Block Memory IP in Vivado - Other Options & .coe file](./assets/vga/ROM-BlockMemoryIP-3.png ':size=500')
 
 *Block Memory IP in Vivado - Other Options & .coe file*
 
@@ -669,13 +669,9 @@ Here we need to start reading from ROM.
 The image is split into two parts to get higher fidelity while keeping the correct timing.
 The image will be stretched over the vertical axis, so the image file is squizzed together vertically to compensate.
 
-![Photo part 1of2](/assets/vga/photo-mydogs-256x256-1of2.jpg 'size=256')
+![Photo part 1of2](/assets/vga/photo-mydogs-256x256-1of2.jpg ':size=256') ![Photo part 2of2](/assets/vga/photo-mydogs-256x256-2of2.jpg ':size=256')
 
-*Photo part 1of2*
-
-![Photo part 2of2](/assets/vga/photo-mydogs-256x256-2of2.jpg 'size=256')
-
-*Photo part 2of2*
+*Photo part 1of2* - *Photo part 2of2*
 
 The Image Processing mode consists of:
 
